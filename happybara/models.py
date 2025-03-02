@@ -30,7 +30,9 @@ class CalendarDirection(Enum):
     DOWN = -1
 
 
-def safe_date(year, month, day, direction: CalendarDirection = CalendarDirection.DOWN):
+def safe_date(
+    year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
+) -> dt.date:
     date_valid: bool = False
     day_offset = 0
     while not date_valid:
@@ -154,7 +156,7 @@ class CreditCardInstallment:
             dates.append(charge)
 
             next_charge = this_day_next_month(
-                next_charge, self.credit_card.statement_day
+                next_statement_date, self.credit_card.statement_day
             )
         return dates
 
