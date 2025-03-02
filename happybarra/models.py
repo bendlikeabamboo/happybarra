@@ -161,7 +161,3 @@ class CreditCardInstallment:
         return dates
 
     def _get_dates_on_statement(self, start_date: dt.date): ...
-
-
-if __name__ == "__main__":
-    print("Hello world")

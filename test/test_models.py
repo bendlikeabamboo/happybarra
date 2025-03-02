@@ -146,5 +146,39 @@ def test_dates_on_purchase(cc: CreditCard):
     assert charge_dates[2].bill_post_date == last_month["bill_post_date"]
     assert charge_dates[2].statement_date == last_month["statement_date"]
     assert charge_dates[2].due_date == last_month["due_date"]
+
+    first_month = {}
+    first_month["amount"] = 100.0
+    first_month["bill_post_date"] = dt.date(2025, 3, 2)
+    # will not be included in 2025-03-02 because that cutoff will be moved to 2025-02-28
+    # because it falls on a weekend
+    first_month["statement_date"] = dt.date(2025, 4, 2)
+    first_month["due_date"] = dt.date(2025, 4, 3)
+
+    last_month = {}
+    last_month["amount"] = 100.0
+    last_month["bill_post_date"] = dt.date(2025, 6, 2)
+    last_month["statement_date"] = dt.date(2025, 6, 2)
+    last_month["due_date"] = dt.date(2025, 6, 3)
+
+    installment = CreditCardInstallment(
+        cc,
+        3,
+        dt.date(2025, 3, 2),
+        InstallmentPolicy.ON_PURCHASE_DAY,
+        300.00,
+        InstallmentAmountType.TOTAL_FIXED,
+    )
+    charge_dates = installment.get_charge_dates()
+    
+    assert charge_dates[0].amount == first_month["amount"]
+    assert charge_dates[0].bill_post_date == first_month["bill_post_date"]
+    assert charge_dates[0].statement_date == first_month["statement_date"]
+    assert charge_dates[0].due_date == first_month["due_date"]
+
+    assert charge_dates[2].amount == last_month["amount"]
+    assert charge_dates[2].bill_post_date == last_month["bill_post_date"]
+    assert charge_dates[2].statement_date == last_month["statement_date"]
+    assert charge_dates[2].due_date == last_month["due_date"]
     
 
