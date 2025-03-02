@@ -4,7 +4,7 @@ from happybara.models import (
     WeekEndPolicy,
     CreditCardInstallment,
     InstallmentPolicy,
-    InstallmentAmountType,
+    InstallmentAmountType,weekend_check,this_day_next_month
 )
 import pytest
 import datetime as dt
@@ -37,55 +37,59 @@ def fixture_cc_swe_dwd():
 def test_next_statement_before_statement(cc: CreditCard):
     _input = dt.date(2025, 3, 1)
     expct = dt.date(2025, 4, 2)
-    actual = cc.next_statement(_input)
+    actual = cc.statement_date(_input)
     assert expct == actual
 
 
-def test_next_statement_on_statement(cc: CreditCard):
-    expected = dt.date(2025, 3, 2)
-    actual = cc.next_statement(dt.date(2025, 3, 2))
+def test_statement_for_purchase_on_statement(cc: CreditCard):
+    # Bought something in March 2, 2025.
+    # This is a Sunday.
+    # My statement should've been given last Friday (Feb 28).
+    # So this purchase should be placed on the next statement.
+    expected = dt.date(2025, 4, 2)
+    actual = cc.statement_date(dt.date(2025, 3, 2))
     assert expected == actual
 
 
 def test_next_statement_aft_statement(cc: CreditCard):
     expected = dt.date(2025, 4, 2)
-    actual = cc.next_statement(dt.date(2025, 3, 3))
+    actual = cc.statement_date(dt.date(2025, 3, 3))
     assert expected == actual
 
 
 def test_weekend_check_prev_business_day(cc_swe_dwd: CreditCard):
     expected = dt.date(2025, 3, 7)
-    actual = cc_swe_dwd._weekend_check(dt.date(2025, 3, 8), WeekEndPolicy.PREV_BANK_DAY)
+    actual = weekend_check(dt.date(2025, 3, 8), WeekEndPolicy.PREV_BANK_DAY)
     assert expected == actual
 
 
 def test_weekend_check_next_business_day(cc_swe_dwd: CreditCard):
     expected = dt.date(2025, 3, 10)
-    actual = cc_swe_dwd._weekend_check(dt.date(2025, 3, 8), WeekEndPolicy.NEXT_BANK_DAY)
+    actual = weekend_check(dt.date(2025, 3, 8), WeekEndPolicy.NEXT_BANK_DAY)
     assert expected == actual
 
 
 def test_weekend_check_prev_business_day_sunday(cc_swe_dwd: CreditCard):
     expected = dt.date(2025, 3, 7)
-    actual = cc_swe_dwd._weekend_check(dt.date(2025, 3, 9), WeekEndPolicy.PREV_BANK_DAY)
+    actual = weekend_check(dt.date(2025, 3, 9), WeekEndPolicy.PREV_BANK_DAY)
     assert expected == actual
 
 
 def test_weekend_check_next_business_day_sunday(cc_swe_dwd: CreditCard):
     expected = dt.date(2025, 3, 10)
-    actual = cc_swe_dwd._weekend_check(dt.date(2025, 3, 9), WeekEndPolicy.NEXT_BANK_DAY)
+    actual = weekend_check(dt.date(2025, 3, 9), WeekEndPolicy.NEXT_BANK_DAY)
     assert expected == actual
 
 
-def test_next_payment_before_stmnt(cc: CreditCard):
-    expected = dt.date(2025, 3, 3)
-    actual = cc.next_due_date(dt.date(2025, 3, 1))
+def test_due_date_for_purchase_made_before_statement(cc: CreditCard):
+    expected = dt.date(2025, 4, 3)
+    actual = cc.due_date(dt.date(2025, 4, 1))
     assert expected == actual
 
 
-def test_next_payment_on_stmnt(cc: CreditCard):
-    expected = dt.date(2025, 3, 3)
-    actual = cc.next_due_date(dt.date(2025, 3, 2))
+def test_due_date_for_purchase_made_on_stmnt(cc: CreditCard):
+    expected = dt.date(2025, 4, 3)
+    actual = cc.due_date(dt.date(2025, 4, 2))
     assert expected == actual
 
 
@@ -93,7 +97,7 @@ def test_next_payment_after_stmnt(cc: CreditCard):
     _input = dt.date(2025, 3, 3)
     expct = dt.date(2025, 4, 3)
 
-    actual = cc.next_due_date(_input)
+    actual = cc.due_date(_input)
     assert expct == actual
 
 
@@ -102,7 +106,7 @@ def test_stmnt_falls_on_non_existent_day_next_month():
     test_purchase_date = dt.date(2025, 1, 31)
 
     expc_statement_date = dt.date(2025, 2, 28)
-    actual = cc.next_statement(test_purchase_date)
+    actual = cc.statement_date(test_purchase_date)
     assert expc_statement_date == actual
 
 

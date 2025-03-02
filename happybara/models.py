@@ -25,20 +25,42 @@ class InstallmentPolicy(Enum):
     ON_PURCHASE_DAY = 2
 
 
-def this_day_next_month(date: dt.date, day_of_month: int = None) -> dt.date:
-    reference_day = day_of_month or date.day
+class CalendarDirection(Enum):
+    UP = 1
+    DOWN = -1
+
+
+def safe_date(year, month, day, direction: CalendarDirection = CalendarDirection.DOWN):
     date_valid: bool = False
-    days_to_subtract = 0
+    day_offset = 0
     while not date_valid:
         try:
-            target_date = dt.date(
-                date.year, date.month + 1, reference_day - days_to_subtract
-            )
+            target_date = dt.date(year, month, day + (day_offset * direction.value))
             date_valid = True
         except ValueError:
-            days_to_subtract += 1
+            day_offset += 1
             date_valid = False
     return target_date
+
+
+def this_day_next_month(
+    date: dt.date,
+    day_of_month: int = None,
+    direction: CalendarDirection = CalendarDirection.DOWN,
+) -> dt.date:
+    reference_day = day_of_month or date.day
+    return safe_date(date.year, date.month + 1, reference_day, direction=direction)
+
+
+def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
+    day_offset: int = 0
+    weekday = reference_date.weekday()
+    if weekday in {5, 6}:
+        if policy == WeekEndPolicy.PREV_BANK_DAY:
+            day_offset = -1 * (weekday - 4)
+        elif policy == WeekEndPolicy.NEXT_BANK_DAY:
+            day_offset = 7 - weekday
+    return reference_date + dt.timedelta(days=day_offset)
 
 
 @dataclass
@@ -52,46 +74,34 @@ class CreditCard:
     due_date_policy: WeekEndPolicy = field(default=WeekEndPolicy.NEXT_BANK_DAY)
     statement_policy: WeekEndPolicy = field(default=WeekEndPolicy.PREV_BANK_DAY)
 
-    def next_due_date(self, reference_date: dt.date) -> dt.date:
+    def due_date(self, reference_date: dt.date) -> dt.date:
         if self.due_date_type == DueDateType.X_DAYS_AFTER:
             return self._x_days_after(reference_date)
         if self.due_date_type == DueDateType.XTH_OF_MONTH:
             raise NotImplementedError("Due date type not yet implemented")
 
-    def _weekend_check(self, reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
-
-        day_offset: int = 0
-        weekday = reference_date.weekday()
-
-        if weekday in {5, 6}:
-            if policy == WeekEndPolicy.PREV_BANK_DAY:
-                day_offset = -1 * (weekday - 4)
-            elif policy == WeekEndPolicy.NEXT_BANK_DAY:
-                day_offset = 7 - weekday
-
-        return reference_date + dt.timedelta(days=day_offset)
-
-    def next_statement(self, reference_date: dt.date):
-        if reference_date <= dt.date(
+    def statement_date(self, reference_date: dt.date):
+        true_statement_date = safe_date(
             reference_date.year, reference_date.month, self.statement_day
-        ):
-            statement_date = dt.date(
-                reference_date.year, reference_date.month, self.statement_day
-            )
-        else:
-            statement_date = this_day_next_month(reference_date, self.statement_day)
+        )
 
-        statement_date = self._weekend_check(statement_date, self.statement_policy)
-        return statement_date
+        # weekend_check the true statement_date
+        weekend_checked_statement_date = weekend_check(
+            true_statement_date, self.statement_policy
+        )
+
+        if reference_date <= weekend_checked_statement_date:
+            return weekend_checked_statement_date
+
+        return self.statement_date(this_day_next_month(true_statement_date))
 
     def _x_days_after(self, reference_date: dt.date):
         # compute due date from statement date
-        statement_date = self.next_statement(reference_date)
+        statement_date = self.statement_date(reference_date)
         due_date = statement_date + dt.timedelta(days=self.due_date_ref)
 
         # checks
-        validated_due_date = self._weekend_check(due_date, self.due_date_policy)
-
+        validated_due_date = weekend_check(due_date, self.due_date_policy)
         return validated_due_date
 
 
@@ -108,7 +118,7 @@ class CreditCardInstallment:
     credit_card: CreditCard
     tenure: int
     start_date: dt.date
-    policy: InstallmentPolicy # place this on cc attribute
+    policy: InstallmentPolicy  # place this on cc attribute
     amount: Decimal
     amount_type: InstallmentAmountType
 
@@ -131,8 +141,8 @@ class CreditCardInstallment:
         dates: List[CreditCardCharge] = []
         next_charge: dt.date = start_date
         for _ in range(self.tenure):
-            next_due_date = self.credit_card.next_due_date(next_charge)
-            next_statement_date = self.credit_card.next_statement(next_charge)
+            next_due_date = self.credit_card.due_date(next_charge)
+            next_statement_date = self.credit_card.statement_date(next_charge)
             next_bill_post_date = next_charge
 
             charge = CreditCardCharge(
