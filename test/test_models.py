@@ -1,4 +1,4 @@
-from happybara.models import (
+from happybarra.models import (
     CreditCard,
     DueDateType,
     WeekEndPolicy,
@@ -180,5 +180,3 @@ def test_dates_on_purchase(cc: CreditCard):
     assert charge_dates[2].bill_post_date == last_month["bill_post_date"]
     assert charge_dates[2].statement_date == last_month["statement_date"]
     assert charge_dates[2].due_date == last_month["due_date"]
-    
-
