@@ -1,4 +1,4 @@
-from models import Network
+from happybarra.models import Network
 
 
 VISA = Network("VISA")

@@ -10,10 +10,10 @@ from happybarra.models import (
 from happybarra.banks import BPI
 from happybarra.network import VISA
 
-prepop_BPI__MASTERCARD__REWARDS = partial(CreditCard, BPI, "Rewards", VISA)
+BPI__MASTERCARD__REWARDS = partial(CreditCard, BPI, "Rewards", VISA)
 
 if __name__ == "__main__":
-    cc = prepop_BPI__MASTERCARD__REWARDS(20, 15)
+    cc = BPI__MASTERCARD__REWARDS(20, 15)
     cci = CreditCardInstallment(
         cc,
         6,
