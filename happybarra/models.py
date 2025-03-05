@@ -64,6 +64,13 @@ def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
             day_offset = 7 - weekday
     return reference_date + dt.timedelta(days=day_offset)
 
+@dataclass
+class Bank:
+    name: str
+
+@dataclass
+class Network:
+    name: str
 
 @dataclass
 class CreditCard:
