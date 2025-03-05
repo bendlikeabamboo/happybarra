@@ -1,3 +1,3 @@
-from models import Bank
+from happybarra.models import Bank
 
 BPI = Bank("BPI")
