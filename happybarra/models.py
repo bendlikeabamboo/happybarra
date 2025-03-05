@@ -64,6 +64,13 @@ def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
             day_offset = 7 - weekday
     return reference_date + dt.timedelta(days=day_offset)
 
+@dataclass
+class Bank:
+    name: str
+
+@dataclass
+class Network:
+    name: str
 
 @dataclass
 class CreditCard:
@@ -120,9 +127,10 @@ class CreditCardInstallment:
     credit_card: CreditCard
     tenure: int
     start_date: dt.date
-    policy: InstallmentPolicy  # place this on cc attribute
     amount: Decimal
-    amount_type: InstallmentAmountType
+    policy: InstallmentPolicy = field(default=InstallmentPolicy.ON_PURCHASE_DAY) # place this on cc attribute
+    amount_type: InstallmentAmountType = field(default=InstallmentAmountType.MONTHLY_FIXED)
+
 
     def __post_init__(self):
         if self.amount_type == InstallmentAmountType.MONTHLY_FIXED:
