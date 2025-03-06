@@ -28,16 +28,26 @@ class CreditCard:
     bank: str
     name: str
     network: str
-    due_date_ref: int
-    statement_day: int
     due_date_type: DueDateType = field(default=DueDateType.X_DAYS_AFTER)
     due_date_policy: WeekEndPolicy = field(default=WeekEndPolicy.NEXT_BANK_DAY)
     statement_policy: WeekEndPolicy = field(default=WeekEndPolicy.PREV_BANK_DAY)
+    bill_post_policy: InstallmentPolicy = field(
+        default=InstallmentPolicy.ON_STATEMENT_DAY
+    )
+
+
+@dataclass
+class CreditCardInstance:
+    credit_card: CreditCard
+    due_date_ref: int
+    statement_day: int
+    due_date_ref: int
+    statement_day: int
 
     def due_date(self, reference_date: dt.date) -> dt.date:
-        if self.due_date_type == DueDateType.X_DAYS_AFTER:
+        if self.credit_card.due_date_type == DueDateType.X_DAYS_AFTER:
             return self._x_days_after(reference_date)
-        if self.due_date_type == DueDateType.XTH_OF_MONTH:
+        if self.credit_card.due_date_type == DueDateType.XTH_OF_MONTH:
             raise NotImplementedError("Due date type not yet implemented")
 
     def statement_date(self, reference_date: dt.date):
@@ -47,7 +57,7 @@ class CreditCard:
 
         # weekend_check the true statement_date
         weekend_checked_statement_date = weekend_check(
-            true_statement_date, self.statement_policy
+            true_statement_date, self.credit_card.statement_policy
         )
 
         if reference_date <= weekend_checked_statement_date:
@@ -61,12 +71,13 @@ class CreditCard:
         due_date = statement_date + dt.timedelta(days=self.due_date_ref)
 
         # checks
-        validated_due_date = weekend_check(due_date, self.due_date_policy)
+        validated_due_date = weekend_check(due_date, self.credit_card.due_date_policy)
         return validated_due_date
 
 
 @dataclass
 class CreditCardCharge:
+    credit_card_instance: CreditCardInstance
     amount: Decimal
     bill_post_date: dt.date
     statement_date: dt.date
@@ -75,13 +86,10 @@ class CreditCardCharge:
 
 @dataclass
 class CreditCardInstallment:
-    credit_card: CreditCard
+    credit_card_instance: CreditCardInstance
     tenure: int
     start_date: dt.date
     amount: Decimal
-    policy: InstallmentPolicy = field(
-        default=InstallmentPolicy.ON_PURCHASE_DAY
-    )  # place this on cc attribute
     amount_type: InstallmentAmountType = field(
         default=InstallmentAmountType.MONTHLY_FIXED
     )
@@ -95,9 +103,10 @@ class CreditCardInstallment:
             self._monthly_amount = self.amount / self.tenure
 
     def get_charge_dates(self):
-        if self.policy == InstallmentPolicy.ON_PURCHASE_DAY:
+        policy = self.credit_card_instance.credit_card.bill_post_policy
+        if policy == InstallmentPolicy.ON_PURCHASE_DAY:
             self.charges = self._get_dates_on_purchase(self.start_date)
-        elif self.policy == InstallmentPolicy.ON_STATEMENT_DAY:
+        elif policy == InstallmentPolicy.ON_STATEMENT_DAY:
             self.charges = self._get_dates_on_statement(self.start_date)
         return self.charges
 
@@ -105,11 +114,12 @@ class CreditCardInstallment:
         dates: List[CreditCardCharge] = []
         next_charge: dt.date = start_date
         for _ in range(self.tenure):
-            next_due_date = self.credit_card.due_date(next_charge)
-            next_statement_date = self.credit_card.statement_date(next_charge)
+            next_due_date = self.credit_card_instance.due_date(next_charge)
+            next_statement_date = self.credit_card_instance.statement_date(next_charge)
             next_bill_post_date = next_charge
 
             charge = CreditCardCharge(
+                self.credit_card_instance,
                 self._monthly_amount,
                 next_bill_post_date,
                 next_statement_date,
@@ -118,8 +128,38 @@ class CreditCardInstallment:
             dates.append(charge)
 
             next_charge = this_day_next_month(
-                next_statement_date, self.credit_card.statement_day
+                next_statement_date, self.credit_card_instance.statement_day
             )
         return dates
 
-    def _get_dates_on_statement(self, start_date: dt.date): ...
+    def _get_dates_on_statement(self, start_date: dt.date):
+        dates: List[CreditCardCharge] = []
+
+        next_charge: dt.date = start_date
+        for idx in range(self.tenure):
+
+            # If first month of the installment, use the bill post date as the next
+            # charge. If not, use the statement date as the bill_post_date
+            if idx == 0:
+                next_bill_post_date = next_charge
+            else:
+                next_bill_post_date = self.credit_card_instance.statement_date(
+                    next_charge
+                )
+
+            next_due_date = self.credit_card_instance.due_date(next_charge)
+            next_statement_date = self.credit_card_instance.statement_date(next_charge)
+
+            charge = CreditCardCharge(
+                self.credit_card_instance,
+                self._monthly_amount,
+                next_bill_post_date,
+                next_statement_date,
+                next_due_date,
+            )
+
+            dates.append(charge)
+            next_charge = this_day_next_month(
+                next_statement_date, self.credit_card_instance.statement_day
+            )
+        return dates
