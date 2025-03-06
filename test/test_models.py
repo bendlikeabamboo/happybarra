@@ -136,7 +136,7 @@ def test_dates_on_purchase(cc: CreditCard):
         InstallmentAmountType.MONTHLY_FIXED,
     )
     charge_dates = installment.get_charge_dates()
-    
+
     assert charge_dates[0].amount == first_month["amount"]
     assert charge_dates[0].bill_post_date == first_month["bill_post_date"]
     assert charge_dates[0].statement_date == first_month["statement_date"]
@@ -170,7 +170,7 @@ def test_dates_on_purchase(cc: CreditCard):
         InstallmentAmountType.TOTAL_FIXED,
     )
     charge_dates = installment.get_charge_dates()
-    
+
     assert charge_dates[0].amount == first_month["amount"]
     assert charge_dates[0].bill_post_date == first_month["bill_post_date"]
     assert charge_dates[0].statement_date == first_month["statement_date"]

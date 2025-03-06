@@ -1,76 +1,27 @@
-from dataclasses import dataclass, field
 import datetime as dt
-from enum import Enum
+from dataclasses import dataclass, field
 from decimal import Decimal
+from enum import Enum
 from typing import List
 
+from happybarra.enums import (
+    DueDateType,
+    InstallmentAmountType,
+    InstallmentPolicy,
+    WeekEndPolicy,
+)
+from happybarra.utils import safe_date, this_day_next_month, weekend_check
 
-class DueDateType(Enum):
-    X_DAYS_AFTER = 1
-    XTH_OF_MONTH = 2
-
-
-class InstallmentAmountType(Enum):
-    MONTHLY_FIXED = 1
-    TOTAL_FIXED = 2
-
-
-class WeekEndPolicy(Enum):
-    PREV_BANK_DAY = -1
-    NEXT_BANK_DAY = 2
-
-
-class InstallmentPolicy(Enum):
-    ON_STATEMENT_DAY = 1
-    ON_PURCHASE_DAY = 2
-
-
-class CalendarDirection(Enum):
-    UP = 1
-    DOWN = -1
-
-
-def safe_date(
-    year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
-) -> dt.date:
-    date_valid: bool = False
-    day_offset = 0
-    while not date_valid:
-        try:
-            target_date = dt.date(year, month, day + (day_offset * direction.value))
-            date_valid = True
-        except ValueError:
-            day_offset += 1
-            date_valid = False
-    return target_date
-
-
-def this_day_next_month(
-    date: dt.date,
-    day_of_month: int = None,
-    direction: CalendarDirection = CalendarDirection.DOWN,
-) -> dt.date:
-    reference_day = day_of_month or date.day
-    return safe_date(date.year, date.month + 1, reference_day, direction=direction)
-
-
-def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
-    day_offset: int = 0
-    weekday = reference_date.weekday()
-    if weekday in {5, 6}:
-        if policy == WeekEndPolicy.PREV_BANK_DAY:
-            day_offset = -1 * (weekday - 4)
-        elif policy == WeekEndPolicy.NEXT_BANK_DAY:
-            day_offset = 7 - weekday
-    return reference_date + dt.timedelta(days=day_offset)
 
 @dataclass
 class Bank:
     name: str
 
+
 @dataclass
 class Network:
     name: str
+
 
 @dataclass
 class CreditCard:
@@ -128,9 +79,12 @@ class CreditCardInstallment:
     tenure: int
     start_date: dt.date
     amount: Decimal
-    policy: InstallmentPolicy = field(default=InstallmentPolicy.ON_PURCHASE_DAY) # place this on cc attribute
-    amount_type: InstallmentAmountType = field(default=InstallmentAmountType.MONTHLY_FIXED)
-
+    policy: InstallmentPolicy = field(
+        default=InstallmentPolicy.ON_PURCHASE_DAY
+    )  # place this on cc attribute
+    amount_type: InstallmentAmountType = field(
+        default=InstallmentAmountType.MONTHLY_FIXED
+    )
 
     def __post_init__(self):
         if self.amount_type == InstallmentAmountType.MONTHLY_FIXED:
