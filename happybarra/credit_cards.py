@@ -10,6 +10,7 @@ from happybarra.models import (
     InstallmentPolicy,
 )
 from happybarra.network import *
+from happybarra.registry import registry
 
 BPI__MASTERCARD__REWARDS = partial(CreditCard, BPI, "Rewards", MASTERCARD)
 BPI__MASTERCARD__GOLD = partial(CreditCard, BPI, "Gold", MASTERCARD)
