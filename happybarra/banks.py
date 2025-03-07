@@ -7,4 +7,8 @@ EASTWEST = Bank("Eastwest")
 METROBANK = Bank("Metrobank")
 RCBC = Bank("RCBC")
 HSBC = Bank("HSBC")
-IMAGINARY_BANK = Bank("Imaginary")
+
+if __name__ == "__main__":
+    Sample = Bank("Sample")
+    Sample2 = Bank("Sample2")
+    print(Bank.registry)

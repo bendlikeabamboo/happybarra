@@ -22,6 +22,7 @@ from happybarra.utils import weekend_check
 # USUAL CASE OF CC SETUP
 # ======================================================================================
 
+
 @pytest.fixture(name="cc_generic")
 def fixture_cc_generic() -> CreditCard:
     bank = Bank("BankA")
@@ -71,6 +72,8 @@ def fixture_cc_instance_on_purchase_day(
         due_date_ref=1,
         statement_day=2,
     )
+
+
 # ======================================================================================
 # TEST CASES
 # ======================================================================================

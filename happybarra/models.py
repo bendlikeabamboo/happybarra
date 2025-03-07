@@ -3,8 +3,8 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
 from typing import List
-from functools import partial
-from typing import ClassVar, TypeVar
+from functools import partial, wraps
+from typing import TypeVar, Protocol
 
 from happybarra.enums import (
     DueDateType,
@@ -14,7 +14,8 @@ from happybarra.enums import (
 )
 from happybarra.utils import safe_date, this_day_next_month, weekend_check
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 def registry(registry_type):
     registry: dict = {}
@@ -22,7 +23,7 @@ def registry(registry_type):
     def decorated(*args):
         return registry.get(registry_type.__name__)(*args)
 
-    def register(name: str = None):
+    def register(name: str = ""):
         def inner(callable_):
             class_name = name or callable_.__name__
             parametrized_callable_ = partial(callable_, class_name)
@@ -37,50 +38,41 @@ def registry(registry_type):
     return decorated
 
 
-def attach_registry(_class: TypeVar[T]) ->  TypeVar[T]:
-    """
-    Attach a registry to a class
-    """
+def instance_registry(cls: T) -> T:
+    "Attach a registry to a class"
 
-    def _add_to_registry(cls, _self):
-        """Register the class instance to the registry"""
-        cls.registry[_self.name] = _self
+    # save the original init method to a variable
+    original_init = cls.__init__
 
-    def __post_init__(self, *args, **kwargs):
-        """
-        Hook for registering the instance to the registry
-        """
-        _class._add_to_registry(_class, self)
-        if hasattr(_class, "__post_post_init__"):
-            self.__post_post_init__(*args, **kwargs)
+    # declare an empty registry
+    cls.registry = dict()
 
-    _class.registry: ClassVar[dict] = {}
-    _class._add_to_registry = _add_to_registry
-    
-    # put the original post init in a variable called post post init
-    if hasattr(_class, "__post_init__"):
-        _class.__post_post_init__ = _class.__post_init__
+    # new init method that registers the instance, yey
+    @wraps(original_init)
+    def new_init(self, *args, **kwargs):
+        original_init(self, *args, **kwargs)
+        cls.registry[self.name] = self
 
-    # inject our own post init
-    _class.__post_init__ = __post_init__
+    # replace init with new init method
+    cls.__init__ = new_init
+    cls.__annotations__["registry"] = dict
+    return cls
 
-    return _class
-    
 
+@instance_registry
 @dataclass
-@attach_registry
 class Bank:
     name: str
 
 
+@instance_registry
 @dataclass
-@attach_registry
 class Network:
     name: str
 
 
+@instance_registry
 @dataclass
-@attach_registry
 class CreditCard:
     bank: str
     name: str
@@ -221,11 +213,12 @@ class CreditCardInstallment:
             )
         return dates
 
+
 if __name__ == "__main__":
     bank = Bank("BankA")
     bank = Bank("BankB")
     print(Bank.registry)
-    cc = CreditCard(Bank, "sample cc","Network")
-    cci = CreditCardInstance(cc, 1,2)
-    ccin = CreditCardInstallment(cci,3,dt.date(2025,3,7),500.00)
+    cc = CreditCard(Bank, "sample cc", "Network")
+    cci = CreditCardInstance(cc, 1, 2)
+    ccin = CreditCardInstallment(cci, 3, dt.date(2025, 3, 7), 500.00)
     print(ccin.get_charge_dates())
