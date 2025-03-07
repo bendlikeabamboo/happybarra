@@ -5,7 +5,7 @@ import pandas as pd
 import streamlit as st
 
 from happybarra.credit_cards import BPI__MASTERCARD__REWARDS
-from happybarra.models import CreditCard, CreditCardInstallment
+from happybarra.models import CreditCard, CreditCardInstallment, Bank
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ INSTALLMENT_TYPES = ("Monthly", "Annual")
 cci_init = False
 st.write("# 🐹 happybarra")
 st.write("Do I have enough money for this?")
-bank = st.selectbox("Bank", BANKS)
+bank = st.selectbox("Bank", [bank for bank in Bank.registry])
 network = st.selectbox("Network", NETWORKS)
 credit_card = st.selectbox(
     "Card Type", CARD_TYPES.get((bank, network), "No cards of this type.")
