@@ -1,70 +1,37 @@
 import logging
-from functools import partial
 
 import pandas as pd
 import streamlit as st
 
-from happybarra.credit_cards import BPI__MASTERCARD__REWARDS
-from happybarra.models import CreditCard, CreditCardInstallment, Bank
+from happybarra.models import CreditCard, CreditCardInstallment, Bank, Network
+from happybarra.enums import InstallmentAmountType
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
-
-
-BANKS = ("Unionbank", "Metrobank", "BPI", "Eastwest", "Security Bank")
-NETWORKS = ("VISA", "Mastercard", "American Express", "Discover", "Paypal")
-CARD_TYPES = {
-    ("Unionbank", "VISA"): ["PlayEveryday", "Rewards Platinum"],
-    ("Metrobank", "VISA"): ["Titanium"],
-    ("Metrobank", "Mastercard"): ["Peso Platinum"],
-    ("BPI", "VISA"): [
-        "Amore Cashback",
-    ],
-    ("BPI", "Mastercard"): [
-        "Rewards",
-        "Gold",
-    ],
-    ("Eastwest", "VISA"): ["Platinum"],
-    ("Security Bank", "Mastercard"): ["Travel Platinum"],
-}
-INSTALLMENT_TYPES = ("Monthly", "Annual")
 
 cci_init = False
 st.write("# 🐹 happybarra")
 st.write("Do I have enough money for this?")
 bank = st.selectbox("Bank", [bank for bank in Bank.registry])
-network = st.selectbox("Network", NETWORKS)
+network = st.selectbox("Network", [network for network in Network.registry])
 credit_card = st.selectbox(
-    "Card Type", CARD_TYPES.get((bank, network), "No cards of this type.")
+    "Credit Card",
+    [
+        cc_name
+        for cc_name, cc_object in CreditCard.registry.items()
+        if cc_object.bank.name == bank and cc_object.network.name == network
+    ],
 )
-
-
-def get_credit_card(cc_key: tuple) -> partial[CreditCard]:
-    _logger.debug("getting credit card")
-    ccs = {("BPI", "Mastercard", "Rewards"): BPI__MASTERCARD__REWARDS}
-    return ccs.get(cc_key, "error")
-
-
-# Every form must have a submit button.
-# _logger.debug("Form [bank_submitted]: %s", bank_submitted)
-
-# if bank_submitted:
-#     with st.form("card"):
-#         st.write("Choose credit card")
-#         card_type = st.selectbox("Card Type", CARD_TYPES[bank])
-#         card_type_submitted = st.form_submit_button("Submit")
-
-#         if card_type_submitted:
-#             st.write("You have selected the following card:", card_type)
 
 st.write(
     f"You have selected the following card: **{bank} - {network} - {credit_card}**",
 )
-installment_type = st.radio("What installment amount do you know?", INSTALLMENT_TYPES)
+installment_type = st.radio(
+    "What installment amount do you know?", InstallmentAmountType
+)
 installment_amount = st.number_input(
     f"{installment_type} Amount", step=500.0, format="%.2f"
 )
-
 
 statement_date = st.select_slider("Select your statement date", range(1, 32))
 due_date_ref = st.select_slider(
