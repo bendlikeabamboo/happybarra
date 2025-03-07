@@ -1,25 +1,41 @@
-from functools import partial
 import datetime as dt
+from functools import partial
+
+from happybarra.banks import *
 from happybarra.models import (
     CreditCard,
-    DueDateType,
     CreditCardInstallment,
-    InstallmentPolicy,
+    DueDateType,
     InstallmentAmountType,
+    InstallmentPolicy,
 )
-from happybarra.banks import BPI
-from happybarra.network import VISA
+from happybarra.networks import *
+from happybarra.registries import registry
 
-BPI__MASTERCARD__REWARDS = partial(CreditCard, BPI, "Rewards", VISA)
+BPI__MASTERCARD__REWARDS = CreditCard(BPI, "BPI Rewards", MASTERCARD)
+BPI__MASTERCARD__GOLD = CreditCard(BPI, "BPI Gold", MASTERCARD)
+
+
+UNIONBANK__VISA__REWARDS_PLATINUM = CreditCard(
+    UNIONBANK, "Unionbank Rewards Visa Platinum", VISA
+)
+UNIONBANK__VISA__U_VISA_PLATINUM = CreditCard(
+    UNIONBANK, "Unionbank U Visa Platinum", VISA
+)
+UNIONBANK__VISA__PLAYEVERYDAY = CreditCard(UNIONBANK, "Unionbank PlayEveryday", VISA)
+
+
+SECURITY_BANK__MASTERCARD__TRAVEL_PLATINUM = CreditCard(
+    SECURITY_BANK, "Security Bank Travel Platinum Mastercard", MASTERCARD
+)
+
+
+METROBANK__MASTERCARD__PESO_PLATINUM = CreditCard(
+    METROBANK, "Metrobank Platinum Mastercard", MASTERCARD
+)
+
+EASTWEST__VISA__PLATINUM = CreditCard(EASTWEST, "Eastwest Visa Platinum", VISA)
+
 
 if __name__ == "__main__":
-    cc = BPI__MASTERCARD__REWARDS(20, 15)
-    cci = CreditCardInstallment(
-        cc,
-        6,
-        dt.date(2025, 3, 5),
-        InstallmentPolicy.ON_PURCHASE_DAY,
-        500.00,
-        InstallmentAmountType.MONTHLY_FIXED,
-    )
-    print(cci.get_charge_dates())
+    print(CreditCard.registry)

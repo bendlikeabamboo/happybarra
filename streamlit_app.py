@@ -1,12 +1,14 @@
-import streamlit as st
 import logging
-import pandas as pd
 from functools import partial
+
+import pandas as pd
+import streamlit as st
+
+from happybarra.credit_cards import BPI__MASTERCARD__REWARDS
+from happybarra.models import CreditCard, CreditCardInstallment, Bank
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
-
-from happybarra.models import CreditCard
 
 
 BANKS = ("Unionbank", "Metrobank", "BPI", "Eastwest", "Security Bank")
@@ -30,14 +32,11 @@ INSTALLMENT_TYPES = ("Monthly", "Annual")
 cci_init = False
 st.write("# 🐹 happybarra")
 st.write("Do I have enough money for this?")
-bank = st.selectbox("Bank", BANKS)
+bank = st.selectbox("Bank", [bank for bank in Bank.registry])
 network = st.selectbox("Network", NETWORKS)
 credit_card = st.selectbox(
     "Card Type", CARD_TYPES.get((bank, network), "No cards of this type.")
 )
-
-
-from happybarra.credit_cards import BPI__MASTERCARD__REWARDS
 
 
 def get_credit_card(cc_key: tuple) -> partial[CreditCard]:
@@ -58,7 +57,6 @@ def get_credit_card(cc_key: tuple) -> partial[CreditCard]:
 #         if card_type_submitted:
 #             st.write("You have selected the following card:", card_type)
 
-
 st.write(
     f"You have selected the following card: **{bank} - {network} - {credit_card}**",
 )
@@ -67,8 +65,6 @@ installment_amount = st.number_input(
     f"{installment_type} Amount", step=500.0, format="%.2f"
 )
 
-
-from happybarra.models import CreditCardInstallment
 
 statement_date = st.select_slider("Select your statement date", range(1, 32))
 due_date_ref = st.select_slider(
@@ -93,7 +89,7 @@ try:
     _logger.debug(cci)
     cci_init = True
 except Exception as e:
-    _logger.debug("cci failed error: ",e )
+    _logger.debug("cci failed error: ", e)
     st.write(":)")
 
 if cci_init:
