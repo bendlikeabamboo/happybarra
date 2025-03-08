@@ -1,10 +1,12 @@
 import datetime as dt
+from dateutil.relativedelta import relativedelta
 from typing import TypeVar
 from functools import wraps
 
 from happybarra.enums import CalendarDirection, WeekEndPolicy
 
 T = TypeVar("T")
+
 
 def safe_date(
     year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
@@ -13,11 +15,14 @@ def safe_date(
     day_offset = 0
     while not date_valid:
         try:
-            target_date = dt.date(year, month, day + (day_offset * direction.value))
+            target_date = dt.date(year, month, day) + dt.timedelta(
+                days=day_offset * direction.value
+            )
             date_valid = True
         except ValueError:
             day_offset += 1
             date_valid = False
+
     return target_date
 
 
@@ -27,7 +32,9 @@ def this_day_next_month(
     direction: CalendarDirection = CalendarDirection.DOWN,
 ) -> dt.date:
     reference_day = day_of_month or date.day
-    return safe_date(date.year, date.month + 1, reference_day, direction=direction)
+    return safe_date(
+        date.year, date.month, reference_day, direction=direction
+    ) + relativedelta(months=1)
 
 
 def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
@@ -39,6 +46,7 @@ def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
         elif policy == WeekEndPolicy.NEXT_BANK_DAY:
             day_offset = 7 - weekday
     return reference_date + dt.timedelta(days=day_offset)
+
 
 def registry(registry_type):
     registry: dict = {}
