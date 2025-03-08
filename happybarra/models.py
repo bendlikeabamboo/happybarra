@@ -1,10 +1,8 @@
 import datetime as dt
 from dataclasses import dataclass, field
 from decimal import Decimal
-from enum import Enum
-from typing import List
 from functools import partial, wraps
-from typing import TypeVar, Protocol
+from typing import List, Protocol, TypeVar
 
 from happybarra.enums import (
     DueDateType,
@@ -12,51 +10,12 @@ from happybarra.enums import (
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.utils import safe_date, this_day_next_month, weekend_check
-
-T = TypeVar("T")
-
-
-def registry(registry_type):
-    registry: dict = {}
-
-    def decorated(*args):
-        return registry.get(registry_type.__name__)(*args)
-
-    def register(name: str = ""):
-        def inner(callable_):
-            class_name = name or callable_.__name__
-            parametrized_callable_ = partial(callable_, class_name)
-            registry[class_name] = parametrized_callable_
-            print("New process type registered: {class_name}")
-            return parametrized_callable_
-
-        return inner
-
-    decorated.register = register
-    decorated.registry = registry
-    return decorated
-
-
-def instance_registry(cls: T) -> T:
-    "Attach a registry to a class"
-
-    # save the original init method to a variable
-    original_init = cls.__init__
-
-    # declare an empty registry
-    cls.registry = dict()
-
-    # new init method that registers the instance, yey
-    @wraps(original_init)
-    def new_init(self, *args, **kwargs):
-        original_init(self, *args, **kwargs)
-        cls.registry[self.name] = self
-
-    # replace init with new init method
-    cls.__init__ = new_init
-    cls.__annotations__["registry"] = dict
-    return cls
+from happybarra.utils import (
+    safe_date,
+    this_day_next_month,
+    weekend_check,
+    instance_registry,
+)
 
 
 @instance_registry
@@ -126,7 +85,7 @@ class CreditCardInstance:
 
 @dataclass
 class CreditCardCharge:
-    credit_card_instance: CreditCardInstance
+    credit_card_name: str
     amount: Decimal
     bill_post_date: dt.date
     statement_date: dt.date
@@ -168,14 +127,13 @@ class CreditCardInstallment:
             next_bill_post_date = next_charge
 
             charge = CreditCardCharge(
-                self.credit_card_instance,
+                self.credit_card_instance.credit_card.name,
                 self._monthly_amount,
                 next_bill_post_date,
                 next_statement_date,
                 next_due_date,
             )
             dates.append(charge)
-
             next_charge = this_day_next_month(
                 next_statement_date, self.credit_card_instance.statement_day
             )
@@ -200,7 +158,7 @@ class CreditCardInstallment:
             next_statement_date = self.credit_card_instance.statement_date(next_charge)
 
             charge = CreditCardCharge(
-                self.credit_card_instance,
+                self.credit_card_instance.credit_card.name,
                 self._monthly_amount,
                 next_bill_post_date,
                 next_statement_date,
