@@ -11,32 +11,32 @@ T = TypeVar("T")
 def safe_date(
     year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
 ) -> dt.date:
-    date_valid: bool = False
-    day_offset = 0
-    while not date_valid:
+    
+    # validation for february
+    if month == 2 and day in (30, 31, 29):
 
-        # validation for february
-        if month == 2 and day in (30, 31, 29):
-            # handle leap year
-            if year % 4 == 0 and day == 29:
-                day = 29
-            # snap to 28 if it is not valid
-            else:
-                day = 28
+        # handle leap year if direction is down
+        if year % 4 == 0 and day == 29 and direction == CalendarDirection.DOWN:
+            day = 29
 
-        # validation for months with 30
-        if day == 31 and month in (4, 6, 9, 11):
+        # snap to 28 if not leap year
+        elif direction == CalendarDirection.DOWN:
+            day = 28
+
+        # handle case when we want the date to move up the calendar
+        else:
+            month = 3
+            day = 1
+
+    # validation for months with 30
+    if day == 31 and month in (4, 6, 9, 11):
+        if direction == CalendarDirection.DOWN:
             day = 30
+        else:
+            month += 1
+            day = 1
 
-        try:
-            target_date = dt.date(year, month, day) + dt.timedelta(
-                days=day_offset * direction.value
-            )
-            date_valid = True
-        except ValueError:
-            day_offset += 1
-            date_valid = False
-
+    target_date = dt.date(year, month, day) 
     return target_date
 
 

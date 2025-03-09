@@ -18,15 +18,15 @@ from happybarra.credit_cards import *
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
-st.markdown("# 🐹 happybarra")
-st.markdown("Do I have enough money for this?")
+st.markdown("# 🗓️ Credit Card Installment")
+st.markdown("Get a list of your installment due dates 😉.")
 
 # initialize the app
 if "page_key" not in st.session_state:
     st.session_state["page_key"] = "bank_and_network_selection"
 try:
     if st.session_state["page_key"] == "bank_and_network_selection":
-        _logger.debug("asking for bank and network")
+        _logger.debug("asking for bankF and network")
         bank = st.selectbox("Bank", [bank for bank in Bank.registry])
         network = st.selectbox("Network", [network for network in Network.registry])
         bank_and_network_submitted = st.button("Submit")
@@ -78,11 +78,18 @@ try:
 
     if st.session_state["page_key"] == "define_installment":
         _logger.debug("asking for installment")
+
+        installment_type_choices = {
+            "Fixed Monthly": InstallmentAmountType.MONTHLY_FIXED,
+            "Fixed Total": InstallmentAmountType.TOTAL_FIXED
+        }
         installment_type = st.radio(
-            "What installment amount do you know?", InstallmentAmountType
+            "What installment amount do you know?", installment_type_choices
         )
+
+        # TODO: Check if thousand separator is now supported by sprintf.js 🥲
         installment_amount = st.number_input(
-            f"{installment_type} Amount", step=500.0, format="%.2f"
+            f"{installment_type} Amount", step=500.00, format="%.2f"
         )
         installment_tenure = st.number_input(
             f"How many months do you have to pay for it?", step=1
@@ -97,7 +104,7 @@ try:
             st.session_state["installment_instance"] = CreditCardInstallment(
                 st.session_state["credit_card_instance"],
                 tenure=installment_tenure,
-                amount_type=installment_type,
+                amount_type=installment_type_choices[installment_type],
                 amount=installment_amount,
                 start_date=date_input,
             )
