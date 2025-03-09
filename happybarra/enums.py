@@ -1,4 +1,5 @@
 from enum import Enum
+from collections import namedtuple
 
 
 class CalendarDirection(Enum):
@@ -19,7 +20,6 @@ class DueDateType(Enum):
 class InstallmentAmountType(Enum):
     MONTHLY_FIXED = 1
     TOTAL_FIXED = 2
-
 
 class InstallmentPolicy(Enum):
     ON_STATEMENT_DAY = 1

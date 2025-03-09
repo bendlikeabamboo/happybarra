@@ -1,6 +1,7 @@
 import datetime as dt
 from dataclasses import dataclass, field
 from decimal import Decimal
+import logging
 from functools import partial, wraps
 from typing import List, Protocol, TypeVar
 
@@ -16,6 +17,8 @@ from happybarra.utils import (
     weekend_check,
     instance_registry,
 )
+
+_logger = logging.getLogger(__name__)
 
 
 @instance_registry
@@ -103,6 +106,7 @@ class CreditCardInstallment:
     )
 
     def __post_init__(self):
+        _logger.debug("Post initialization if credit card installment")
         if self.amount_type == InstallmentAmountType.MONTHLY_FIXED:
             self._monthly_amount = self.amount
             self._total_amount = self.amount * self.tenure
