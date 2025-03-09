@@ -14,6 +14,20 @@ def safe_date(
     date_valid: bool = False
     day_offset = 0
     while not date_valid:
+
+        # validation for february
+        if month == 2 and day in (30, 31, 29):
+            # handle leap year
+            if year % 4 == 0 and day == 29:
+                day = 29
+            # snap to 28 if it is not valid
+            else:
+                day = 28
+
+        # validation for months with 30
+        if day == 31 and month in (4, 6, 9, 11):
+            day = 30
+
         try:
             target_date = dt.date(year, month, day) + dt.timedelta(
                 days=day_offset * direction.value
