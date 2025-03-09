@@ -18,16 +18,12 @@ from happybarra.credit_cards import *
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
-st.set_page_config(
-    page_title="Hello",
-    page_icon="👋",
-)
-
+st.markdown("# 🐹 happybarra")
+st.markdown("Do I have enough money for this?")
 
 # initialize the app
 if "page_key" not in st.session_state:
     st.session_state["page_key"] = "bank_and_network_selection"
-
 try:
     if st.session_state["page_key"] == "bank_and_network_selection":
         _logger.debug("asking for bank and network")

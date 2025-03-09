@@ -18,14 +18,22 @@ from happybarra.credit_cards import *
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
 
-
-pg = st.navigation(
-    [
-        st.Page("streamlit_app.py", title="Home"),
-        st.Page("page/credit_card_installment.py", title="Credit Card Installment"),
-    ]
+home_page = st.Page("sl_pages/home.py", title="Home")
+installment_page = st.Page(
+    "sl_pages/credit_card_installment.py", title="Credit Card Installment"
 )
+pg = st.navigation([home_page, installment_page])
+st.set_page_config(page_title="happybarra", page_icon="🐹")
 pg.run()
+
+
+# pg = st.navigation(
+#     [
+#         st.Page("streamlit_app.py", title="Home"),
+#         st.Page("page/credit_card_installment.py", title="Credit Card Installment"),
+#     ]
+# )
+# pg.run()
 # st.set_page_config(
 #     page_title="happybarra",
 #     page_icon="🐹",
