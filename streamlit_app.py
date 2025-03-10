@@ -22,7 +22,10 @@ home_page = st.Page("sl_pages/home.py", title="Home")
 installment_page = st.Page(
     "sl_pages/credit_card_installment.py", title="Credit Card Installment"
 )
-pg = st.navigation([home_page, installment_page])
+credit_card_instance = st.Page(
+    "sl_pages/credit_card_instance.py", title="Credit Card Instance"
+)
+pg = st.navigation([home_page, installment_page, credit_card_instance])
 st.set_page_config(page_title="happybarra", page_icon="🐹")
 pg.run()
 
