@@ -36,12 +36,14 @@ try:
         submit = st.button("Submit")
         if submit:
             st.session_state[f"{PAGE_STATE}__statement_date"] = statement_date
-            st.session_state[f"{PAGE_STATE}__due_days_after_statement"] = due_days_after_statement
+            st.session_state[f"{PAGE_STATE}__due_days_after_statement"] = (
+                due_days_after_statement
+            )
             st.session_state[PAGE_STATE] = "credit_card_nickname"
             st.rerun()
 
     if st.session_state[PAGE_STATE] == "credit_card_nickname":
-        nickname = st.text_input("Give your credit card a nick name:",max_chars=15)
+        nickname = st.text_input("Give your credit card a nick name:", max_chars=15)
         submit = st.button("Create Credit Card")
         if submit:
             st.session_state[f"{PAGE_STATE}__nickname"] = nickname
@@ -60,7 +62,7 @@ except Exception as general_exception:
     st.session_state[PAGE_STATE] = f"{PAGE_STATE}__page_tear_down"
     st.write("Something went wrong... Reloading")
     st.rerun()
-    
+
 
 if st.session_state[PAGE_STATE] == f"{PAGE_STATE}__page_tear_down":
     for key in st.session_state:

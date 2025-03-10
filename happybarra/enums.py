@@ -21,6 +21,7 @@ class InstallmentAmountType(Enum):
     MONTHLY_FIXED = 1
     TOTAL_FIXED = 2
 
+
 class InstallmentPolicy(Enum):
     ON_STATEMENT_DAY = 1
     ON_PURCHASE_DAY = 2

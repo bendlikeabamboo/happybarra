@@ -80,7 +80,7 @@ try:
 
         installment_type_choices = {
             "Fixed Monthly": InstallmentAmountType.MONTHLY_FIXED,
-            "Fixed Total": InstallmentAmountType.TOTAL_FIXED
+            "Fixed Total": InstallmentAmountType.TOTAL_FIXED,
         }
         installment_type = st.radio(
             "What installment amount do you know?", installment_type_choices
