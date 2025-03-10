@@ -11,7 +11,7 @@ T = TypeVar("T")
 def safe_date(
     year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
 ) -> dt.date:
-    
+
     # validation for february
     if month == 2 and day in (30, 31, 29):
 
@@ -36,7 +36,7 @@ def safe_date(
             month += 1
             day = 1
 
-    target_date = dt.date(year, month, day) 
+    target_date = dt.date(year, month, day)
     return target_date
 
 
