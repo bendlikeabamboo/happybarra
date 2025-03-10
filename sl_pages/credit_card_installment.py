@@ -2,7 +2,6 @@ import logging
 
 import pandas as pd
 import streamlit as st
-import traceback
 from happybarra.models import (
     CreditCard,
     CreditCardInstallment,
