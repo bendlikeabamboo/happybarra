@@ -10,7 +10,6 @@ from happybarra.models import (
     InstallmentPolicy,
 )
 from happybarra.networks import *
-from happybarra.registries import registry
 
 BPI__MASTERCARD__REWARDS = CreditCard(BPI, "BPI Rewards", MASTERCARD)
 BPI__MASTERCARD__GOLD = CreditCard(BPI, "BPI Gold", MASTERCARD)
