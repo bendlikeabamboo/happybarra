@@ -1,10 +1,9 @@
 import datetime as dt
 from dataclasses import dataclass, field
 from decimal import Decimal
-from enum import Enum
-from typing import List
-from functools import partial
-from typing import ClassVar, TypeVar
+import logging
+from functools import partial, wraps
+from typing import List, Protocol, TypeVar
 
 from happybarra.enums import (
     DueDateType,
@@ -12,75 +11,30 @@ from happybarra.enums import (
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.utils import safe_date, this_day_next_month, weekend_check
+from happybarra.utils import (
+    safe_date,
+    this_day_next_month,
+    weekend_check,
+    instance_registry,
+)
 
-T = TypeVar('T')
-
-def registry(registry_type):
-    registry: dict = {}
-
-    def decorated(*args):
-        return registry.get(registry_type.__name__)(*args)
-
-    def register(name: str = None):
-        def inner(callable_):
-            class_name = name or callable_.__name__
-            parametrized_callable_ = partial(callable_, class_name)
-            registry[class_name] = parametrized_callable_
-            print("New process type registered: {class_name}")
-            return parametrized_callable_
-
-        return inner
-
-    decorated.register = register
-    decorated.registry = registry
-    return decorated
+_logger = logging.getLogger(__name__)
 
 
-def attach_registry(_class: TypeVar[T]) ->  TypeVar[T]:
-    """
-    Attach a registry to a class
-    """
-
-    def _add_to_registry(cls, _self):
-        """Register the class instance to the registry"""
-        cls.registry[_self.name] = _self
-
-    def __post_init__(self, *args, **kwargs):
-        """
-        Hook for registering the instance to the registry
-        """
-        _class._add_to_registry(_class, self)
-        if hasattr(_class, "__post_post_init__"):
-            self.__post_post_init__(*args, **kwargs)
-
-    _class.registry: ClassVar[dict] = {}
-    _class._add_to_registry = _add_to_registry
-    
-    # put the original post init in a variable called post post init
-    if hasattr(_class, "__post_init__"):
-        _class.__post_post_init__ = _class.__post_init__
-
-    # inject our own post init
-    _class.__post_init__ = __post_init__
-
-    return _class
-    
-
+@instance_registry
 @dataclass
-@attach_registry
 class Bank:
     name: str
 
 
+@instance_registry
 @dataclass
-@attach_registry
 class Network:
     name: str
 
 
+@instance_registry
 @dataclass
-@attach_registry
 class CreditCard:
     bank: str
     name: str
@@ -134,7 +88,7 @@ class CreditCardInstance:
 
 @dataclass
 class CreditCardCharge:
-    credit_card_instance: CreditCardInstance
+    credit_card_name: str
     amount: Decimal
     bill_post_date: dt.date
     statement_date: dt.date
@@ -152,6 +106,7 @@ class CreditCardInstallment:
     )
 
     def __post_init__(self):
+        _logger.debug("Post initialization if credit card installment")
         if self.amount_type == InstallmentAmountType.MONTHLY_FIXED:
             self._monthly_amount = self.amount
             self._total_amount = self.amount * self.tenure
@@ -176,14 +131,13 @@ class CreditCardInstallment:
             next_bill_post_date = next_charge
 
             charge = CreditCardCharge(
-                self.credit_card_instance,
+                self.credit_card_instance.credit_card.name,
                 self._monthly_amount,
                 next_bill_post_date,
                 next_statement_date,
                 next_due_date,
             )
             dates.append(charge)
-
             next_charge = this_day_next_month(
                 next_statement_date, self.credit_card_instance.statement_day
             )
@@ -208,7 +162,7 @@ class CreditCardInstallment:
             next_statement_date = self.credit_card_instance.statement_date(next_charge)
 
             charge = CreditCardCharge(
-                self.credit_card_instance,
+                self.credit_card_instance.credit_card.name,
                 self._monthly_amount,
                 next_bill_post_date,
                 next_statement_date,
@@ -221,11 +175,12 @@ class CreditCardInstallment:
             )
         return dates
 
+
 if __name__ == "__main__":
     bank = Bank("BankA")
     bank = Bank("BankB")
     print(Bank.registry)
-    cc = CreditCard(Bank, "sample cc","Network")
-    cci = CreditCardInstance(cc, 1,2)
-    ccin = CreditCardInstallment(cci,3,dt.date(2025,3,7),500.00)
+    cc = CreditCard(Bank, "sample cc", "Network")
+    cci = CreditCardInstance(cc, 1, 2)
+    ccin = CreditCardInstallment(cci, 3, dt.date(2025, 3, 7), 500.00)
     print(ccin.get_charge_dates())

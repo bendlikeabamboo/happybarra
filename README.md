@@ -8,4 +8,9 @@ do i have enough money for this?
 
 ## Features I need
 - [ ] Creating partial functions for other CC
-- [ ] 
+
+## The Perfectionist
+- [ ] Make registry "discoverable" by Pylance (or whatever autocomplete you're using)
+
+## Oh God, We're Now Typing
+- [ ] Turn on mypy 🤪
