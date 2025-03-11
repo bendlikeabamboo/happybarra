@@ -1,6 +1,6 @@
 from happybarra.models import Bank
 
-BPI = Bank("BPI")
+BPI = Bank("Bank of the Philippine Islands")
 UNIONBANK = Bank("Unionbank")
 SECURITY_BANK = Bank("Security Bank")
 EASTWEST = Bank("Eastwest")
