@@ -2,26 +2,27 @@ from enum import Enum
 from collections import namedtuple
 
 
-class CalendarDirection(Enum):
-    UP = 1
-    DOWN = -1
+class CalendarDirection(str, Enum):
+    UP = "DOWN"
+    DOWN = "DOWN"
 
 
-class WeekEndPolicy(Enum):
-    PREV_BANK_DAY = -1
-    NEXT_BANK_DAY = 2
+class WeekEndPolicy(str, Enum):
+    PREV_BANK_DAY = "PREV_BANK_DAY"
+    NO_CHANGE = "NO_CHANGE"
+    NEXT_BANK_DAY = "NEXT_BANK_DAY"
 
 
-class DueDateType(Enum):
-    X_DAYS_AFTER = 1
-    XTH_OF_MONTH = 2
+class DueDateType(str, Enum):
+    X_DAYS_AFTER = "X_DAYS_AFTER"
+    XTH_OF_MONTH = "XTH_OF_MONTH"
 
 
-class InstallmentAmountType(Enum):
-    MONTHLY_FIXED = 1
-    TOTAL_FIXED = 2
+class InstallmentAmountType(str, Enum):
+    MONTHLY_FIXED = "MONTHLY_FIXED"
+    TOTAL_FIXED = "TOTAL_FIXED"
 
 
-class InstallmentPolicy(Enum):
-    ON_STATEMENT_DAY = 1
-    ON_PURCHASE_DAY = 2
+class InstallmentPolicy(str, Enum):
+    ON_STATEMENT_DAY = "ON_STATEMENT_DAY"
+    ON_PURCHASE_DAY = "ON_PURCHASE_DAY"
