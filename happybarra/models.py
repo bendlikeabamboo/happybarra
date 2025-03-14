@@ -4,6 +4,7 @@ from decimal import Decimal
 import logging
 from functools import partial, wraps
 from typing import List, Protocol, TypeVar
+from pydantic import BaseModel
 
 from happybarra.enums import (
     DueDateType,
@@ -22,8 +23,7 @@ _logger = logging.getLogger(__name__)
 
 
 @instance_registry
-@dataclass
-class Bank:
+class Bank(BaseModel):
     name: str
 
 
@@ -36,9 +36,9 @@ class Network:
 @instance_registry
 @dataclass
 class CreditCard:
-    bank: str
+    bank: Bank
     name: str
-    network: str
+    network: Network
     due_date_type: DueDateType = field(default=DueDateType.X_DAYS_AFTER)
     due_date_policy: WeekEndPolicy = field(default=WeekEndPolicy.NEXT_BANK_DAY)
     statement_policy: WeekEndPolicy = field(default=WeekEndPolicy.PREV_BANK_DAY)
@@ -50,8 +50,6 @@ class CreditCard:
 @dataclass
 class CreditCardInstance:
     credit_card: CreditCard
-    due_date_ref: int
-    statement_day: int
     due_date_ref: int
     statement_day: int
 

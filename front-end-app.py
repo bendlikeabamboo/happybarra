@@ -10,7 +10,7 @@ installment_page = st.Page(
     "front-end/credit_card_installment.py", title="Credit Card Installment"
 )
 credit_card_instance = st.Page(
-    "front-end/credit_card_instance.py", title="Credit Card Instance"
+    "front-end/create_credit_card_instance.py", title="Create Credit Card Instance"
 )
 pg = st.navigation([home_page, installment_page, credit_card_instance])
 st.set_page_config(page_title="happybarra", page_icon="🐹")

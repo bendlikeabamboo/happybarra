@@ -25,8 +25,8 @@ from happybarra.utils import weekend_check
 
 @pytest.fixture(name="cc_generic")
 def fixture_cc_generic() -> CreditCard:
-    bank = Bank("BankA")
-    network = Network("NetworkA")
+    bank = Bank(name="BankA")
+    network = Network(name="NetworkA")
     return CreditCard(bank=bank, name="Premium Azul", network=network)
 
 
@@ -53,8 +53,8 @@ def fixture_cc_swe_dwd(cc_generic: CreditCard):
 # ======================================================================================
 @pytest.fixture(name="cc_on_purchase_day")
 def fixture_cc_on_purchase_day() -> CreditCard:
-    bank = Bank("BankA")
-    network = Network("NetworkA")
+    bank = Bank(name="BankA")
+    network = Network(name="NetworkA")
     return CreditCard(
         bank=bank,
         name="Premium Azul",
