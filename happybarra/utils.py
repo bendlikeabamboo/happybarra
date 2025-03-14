@@ -94,8 +94,8 @@ def instance_registry(cls: T) -> T:
 
     # new init method that registers the instance, yey
     @wraps(original_init)
-    def new_init(self, *args, **kwargs):
-        original_init(self, *args, **kwargs)
+    def new_init(self, **kwargs):
+        original_init(self, **kwargs)
         cls.registry[self.name] = self
 
     # replace init with new init method
