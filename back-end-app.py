@@ -134,28 +134,35 @@ async def api_get_credit_card(name: str = "", bank: str = "", network: str = "")
     return get_credit_card(name=name, bank=bank, network=network)
 
 
+class CreditCardInstanceCreationModel(BaseModel):
+    name: str
+    bank: str
+    network: str
+    credit_card: str
+    statement_day: int
+    due_date_reference: int
+
+
 @logged
 def post_credit_card_instance(
-    *,
-    name: str,
-    bank: str,
-    network: str,
-    credit_card: str,
-    statement_day: int,
-    due_date_reference: int
+    credit_card_instance_request: CreditCardInstanceCreationModel,
 ):
 
-    credit_card_response = get_credit_card(name=credit_card, bank=bank, network=network)
+    credit_card_response = get_credit_card(
+        name=credit_card_instance_request.credit_card,
+        bank=credit_card_instance_request.bank,
+        network=credit_card_instance_request.network,
+    )
     credit_card_id = credit_card_response["id"]
 
     response = (
         supabase.table("credit_card_instance")
         .insert(
             {
-                "name": name,
+                "name": credit_card_instance_request.name,
                 "credit_card_id": credit_card_id,
-                "statement_day": statement_day,
-                "due_date_reference": due_date_reference,
+                "statement_day": credit_card_instance_request.statement_day,
+                "due_date_reference": credit_card_instance_request.statement_day,
             }
         )
         .execute()
@@ -165,18 +172,8 @@ def post_credit_card_instance(
 
 @app.post("/api/v1/create_credit_card")
 async def api_post_credit_card_instance(
-    name: str,
-    bank: str,
-    network: str,
-    credit_card: str,
-    statement_day: int,
-    due_date_reference: int,
+    credit_card_instance_request: CreditCardInstanceCreationModel,
 ):
-    post_credit_card_instance(
-        name=name,
-        bank=bank,
-        network=network,
-        credit_card=credit_card,
-        statement_day=statement_day,
-        due_date_reference=due_date_reference,
+    return post_credit_card_instance(
+        credit_card_instance_request=credit_card_instance_request
     )
