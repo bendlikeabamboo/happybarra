@@ -14,8 +14,8 @@ installment_page = st.Page(
 credit_card_instance = st.Page(
     "front-end/create_credit_card_instance.py", title="Create Credit Card Instance"
 )
-login = st.Page("front-end/login.py",title="Access 🐹 happybarra")
-hide_pages(["Home", "Credit Card Installment","Create Credit Card Instance"])
+login = st.Page("front-end/login.py", title="Access 🐹 happybarra")
+hide_pages(["Home", "Credit Card Installment", "Create Credit Card Instance"])
 
 
 if not st.session_state.get("valid_session", False):
@@ -27,8 +27,3 @@ if st.session_state.get("valid_session", False):
     pages_to_show = [home_page, installment_page, credit_card_instance]
     pg = st.navigation(pages_to_show)
     pg.run()
-
-
-
-
-

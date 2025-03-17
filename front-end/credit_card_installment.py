@@ -10,9 +10,9 @@ from happybarra.models import (
     CreditCardInstance,
 )
 from happybarra.enums import InstallmentAmountType
-from happybarra.banks import *
-from happybarra.networks import *
-from happybarra.credit_cards import *
+from happybarra import banks  # noqa: F401
+from happybarra import networks  # noqa: F401
+from happybarra import credit_cards  # noqa: F401
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ try:
             f"{installment_type} Amount", step=500.00, format="%.2f"
         )
         installment_tenure = st.number_input(
-            f"How many months do you have to pay for it?", step=1
+            "How many months do you have to pay for it?", step=1
         )
         date_input = st.date_input("When is the purchase?", format="YYYY-MM-DD")
         installment_purchase_submitted = st.button("Submit")

@@ -1,6 +1,4 @@
 from enum import Enum
-from collections import namedtuple
-
 
 class CalendarDirection(str, Enum):
     UP = "DOWN"

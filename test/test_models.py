@@ -3,7 +3,6 @@ import datetime as dt
 import pytest
 
 from happybarra.enums import (
-    DueDateType,
     InstallmentAmountType,
     InstallmentPolicy,
     WeekEndPolicy,
@@ -160,7 +159,6 @@ def test_stmnt_falls_on_non_existent_day_next_month(cc_generic: CreditCard):
 
 
 def test_dates_on_purchase(cc_instance_on_purchase_day: CreditCardInstance):
-
     first_month = {}
     first_month["amount"] = 100.0
     first_month["bill_post_date"] = dt.date(2025, 3, 2)
