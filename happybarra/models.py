@@ -2,8 +2,7 @@ import datetime as dt
 from dataclasses import dataclass, field
 from decimal import Decimal
 import logging
-from functools import partial, wraps
-from typing import List, Protocol, TypeVar
+from typing import List
 from pydantic import BaseModel
 
 from happybarra.enums import (
@@ -146,7 +145,6 @@ class CreditCardInstallment:
 
         next_charge: dt.date = start_date
         for idx in range(self.tenure):
-
             # If first month of the installment, use the bill post date as the next
             # charge. If not, use the statement date as the bill_post_date
             if idx == 0:

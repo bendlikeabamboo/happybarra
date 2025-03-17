@@ -1,12 +1,12 @@
 from happybarra.models import Bank
 
-BPI = Bank("Bank of the Philippine Islands")
-UNIONBANK = Bank("Unionbank")
-SECURITY_BANK = Bank("Security Bank")
-EASTWEST = Bank("Eastwest")
-METROBANK = Bank("Metrobank")
-RCBC = Bank("RCBC")
-HSBC = Bank("HSBC")
+BPI = Bank(name="Bank of the Philippine Islands")
+UNIONBANK = Bank(name="Unionbank")
+SECURITY_BANK = Bank(name="Security Bank")
+EASTWEST = Bank(name="Eastwest")
+METROBANK = Bank(name="Metrobank")
+RCBC = Bank(name="RCBC")
+HSBC = Bank(name="HSBC")
 
 if __name__ == "__main__":
     Sample = Bank("Sample")

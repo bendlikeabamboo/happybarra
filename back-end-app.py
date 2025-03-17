@@ -7,8 +7,6 @@ from pydantic import BaseModel
 from supabase import Client, create_client
 from functools import wraps
 
-from happybarra.models import CreditCardInstance
-
 logging.basicConfig(level=logging.DEBUG)
 
 _logger = logging.getLogger(__name__)
@@ -50,10 +48,10 @@ def get_bank(name: str = ""):
         assert len(dict(response)["data"]) == 1
     except AssertionError as assert_error:
         if len(dict(response)["data"]) > 1:
-            msg = "Error: database returned multiple items."
+            msg = "Error: database returned multiple items. \n%s"
         else:
-            msg = "Database did not return anything."
-        _logger.error(msg)
+            msg = "Database did not return anything. \n%s"
+        _logger.error(msg % assert_error)
         raise AssertionError(msg)
 
     # return the row
@@ -70,10 +68,10 @@ def get_network(name: str = ""):
         assert len(dict(response)["data"]) == 1
     except AssertionError as assert_error:
         if len(dict(response)["data"]) > 1:
-            msg = "Error: database returned multiple items."
+            msg = "Error: database returned multiple items. \n\%"
         else:
-            msg = "Database did not return anything."
-        _logger.error(msg)
+            msg = "Database did not return anything. \n\%"
+        _logger.error(msg % assert_error)
         raise AssertionError(msg)
 
     # return the row
@@ -86,13 +84,12 @@ def get_credit_card(name: str = "", bank: str = "", network: str = "") -> dict:
     Something something
     """
     bank_response = get_bank(bank)
-    bank_name = bank_response["name"]
     bank_id = bank_response["id"]
-    bank_alias = bank_response["alias"]
+    _logger.debug("bank_response: %s", bank_response)
 
     network_response = get_network(network)
-    network_name = network_response["name"]
     network_id = network_response["id"]
+    _logger.debug("network_response: %s", network_response)
 
     try:
         response = (
@@ -106,10 +103,10 @@ def get_credit_card(name: str = "", bank: str = "", network: str = "") -> dict:
         assert len(dict(response)["data"]) == 1
     except AssertionError as assert_error:
         if len(dict(response)["data"]) > 1:
-            msg = "Error: database returned multiple items."
+            msg = "Error: database returned multiple items. \n%s"
         else:
-            msg = "Database did not return anything."
-        _logger.error(msg)
+            msg = "Database did not return anything. \n%s"
+        _logger.error(msg % assert_error)
         raise AssertionError(msg)
     return dict(response)["data"][0]
 
@@ -147,7 +144,6 @@ class CreditCardInstanceCreationModel(BaseModel):
 def post_credit_card_instance(
     credit_card_instance_request: CreditCardInstanceCreationModel,
 ):
-
     credit_card_response = get_credit_card(
         name=credit_card_instance_request.credit_card,
         bank=credit_card_instance_request.bank,
