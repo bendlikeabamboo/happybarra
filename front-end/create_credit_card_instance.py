@@ -1,10 +1,10 @@
 import streamlit as st
 import logging
-from functools import wraps
+import time
 
-from happybarra.banks import *
-from happybarra.networks import *
-from happybarra.models import Bank
+from happybarra import banks  # noqa: F401
+from happybarra import networks  # noqa: F401
+from happybarra.models import Bank, Network
 
 _logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ try:
             st.rerun()
 
     if st.session_state[PAGE_STATE] == "credit_card_instance_submitted":
-        st.write(f"Say welcome to {st.session_state[f"{PAGE_STATE}__nickname"]}!")
+        st.write(f"Say welcome to {st.session_state[f'{PAGE_STATE}__nickname']}!")
         _logger.info("Submitting credit card info here:")
         restart = st.button("Restart")
         if restart:
@@ -61,6 +61,8 @@ try:
 except Exception as general_exception:
     st.session_state[PAGE_STATE] = f"{PAGE_STATE}__page_tear_down"
     st.write("Something went wrong... Reloading")
+    st.error(f"{general_exception}")
+    time.sleep(3)
     st.rerun()
 
 

@@ -11,10 +11,8 @@ T = TypeVar("T")
 def safe_date(
     year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
 ) -> dt.date:
-
     # validation for february
     if month == 2 and day in (30, 31, 29):
-
         # handle leap year if direction is down
         if year % 4 == 0 and day == 29 and direction == CalendarDirection.DOWN:
             day = 29
@@ -62,25 +60,25 @@ def weekend_check(reference_date: dt.date, policy: WeekEndPolicy) -> dt.date:
     return reference_date + dt.timedelta(days=day_offset)
 
 
-def registry(registry_type):
-    registry: dict = {}
+# def registry(registry_type):
+#     registry: dict = {}
 
-    def decorated(*args):
-        return registry.get(registry_type.__name__)(*args)
+#     def decorated(*args):
+#         return registry.get(registry_type.__name__)(*args)
 
-    def register(name: str = ""):
-        def inner(callable_):
-            class_name = name or callable_.__name__
-            parametrized_callable_ = partial(callable_, class_name)
-            registry[class_name] = parametrized_callable_
-            print("New process type registered: {class_name}")
-            return parametrized_callable_
+#     def register(name: str = ""):
+#         def inner(callable_):
+#             class_name = name or callable_.__name__
+#             parametrized_callable_ = partial(callable_, class_name)
+#             registry[class_name] = parametrized_callable_
+#             print("New process type registered: {class_name}")
+#             return parametrized_callable_
 
-        return inner
+#         return inner
 
-    decorated.register = register
-    decorated.registry = registry
-    return decorated
+# decorated.register = register
+# decorated.registry = registry
+# return decorated
 
 
 def instance_registry(cls: T) -> T:
