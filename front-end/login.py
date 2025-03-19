@@ -10,7 +10,7 @@ load_dotenv()
 _logger = logging.getLogger(__name__)
 logged_in = st.session_state.get("login__logged_in", False)
 
-BACKEND_URL = os.getenv("DEV_BACKEND_URL")
+BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 
 if not logged_in:
@@ -26,10 +26,10 @@ if not logged_in:
     if creds_submitted:
         try:
             # login via the backend
-            response = requests.post(BACKEND_URL, json={
-                "email": email,
-                "password": password
-            })
+            response = requests.post(
+                f"{BACKEND_URL}/api/v1/login",
+                json={"email": email, "password": password},
+            )
             if response.ok:
                 st.session_state["login__logged_in"] = True
                 st.rerun()
@@ -42,6 +42,6 @@ if not logged_in:
                 st.session_state["login__failed_attempt_counter"] += 1
             else:
                 st.session_state["login__failed_attempt_counter"] = 1
-            
+
             _logger.error("Invalid Credentials entered. \nError: %s", err)
             st.rerun()

@@ -4,7 +4,7 @@ import logging
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
-from supabase import Client, create_client, create_async_client
+from supabase import Client, create_client
 from functools import wraps
 
 logging.basicConfig(level=logging.DEBUG)

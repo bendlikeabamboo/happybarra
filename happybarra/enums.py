@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class CalendarDirection(str, Enum):
     UP = "DOWN"
     DOWN = "DOWN"
