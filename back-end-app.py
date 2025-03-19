@@ -4,7 +4,7 @@ import logging
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
-from supabase import Client, create_client
+from supabase import Client, create_client, create_async_client
 from functools import wraps
 
 logging.basicConfig(level=logging.DEBUG)
@@ -16,7 +16,7 @@ app = FastAPI()
 
 load_dotenv()
 url: str = os.environ.get("SUPABASE_URL")
-key: str = os.environ.get("SUPABASE_KEY")
+key: str = os.environ.get("SUPABASE_ANON_KEY")
 supabase: Client = create_client(url, key)
 
 
@@ -151,6 +151,7 @@ def post_credit_card_instance(
     )
     credit_card_id = credit_card_response["id"]
 
+    user_id = supabase.auth.get_user().model_dump()["user"]["id"]
     response = (
         supabase.table("credit_card_instance")
         .insert(
@@ -159,11 +160,12 @@ def post_credit_card_instance(
                 "credit_card_id": credit_card_id,
                 "statement_day": credit_card_instance_request.statement_day,
                 "due_date_reference": credit_card_instance_request.statement_day,
+                "user_id": user_id,
             }
         )
         .execute()
     )
-    return dict(response)
+    return response.model_dump()
 
 
 @app.post("/api/v1/create_credit_card")
@@ -173,3 +175,51 @@ async def api_post_credit_card_instance(
     return post_credit_card_instance(
         credit_card_instance_request=credit_card_instance_request
     )
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
+@logged
+def post_login(login_request: LoginRequest):
+    response = supabase.auth.sign_in_with_password(
+        {
+            "email": login_request.email,
+            "password": login_request.password,
+        }
+    )
+    login_response = LoginResponse(
+        access_token=dict(dict(response)["session"])["access_token"],
+        refresh_token=dict(dict(response)["session"])["refresh_token"],
+    )
+    return login_response
+
+
+@app.post("/api/v1/login")
+async def api_post_login(login_request: LoginRequest) -> LoginResponse:
+    return post_login(login_request)
+
+
+class LogoutRequest(BaseModel): ...
+
+
+class LogoutResponse(BaseModel):
+    msg: str
+
+
+@logged
+def post_logout() -> LogoutResponse:
+    supabase.auth.sign_out()
+    return LogoutResponse(msg="success")
+
+
+@app.post("/api/v1/logout")
+async def api_post_logout() -> LogoutResponse:
+    return post_logout()

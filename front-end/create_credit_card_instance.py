@@ -1,16 +1,17 @@
 import streamlit as st
 import logging
 import time
-
+import requests
 from happybarra import banks  # noqa: F401
 from happybarra import networks  # noqa: F401
-from happybarra.models import Bank, Network
+from happybarra import credit_cards
+from happybarra.models import Bank, Network, CreditCard
 
 _logger = logging.getLogger(__name__)
 
 
 st.markdown("# 💳 Create Credit Card Instance")
-st.markdown("Well, this is going to be important.")
+st.markdown("Let's track your cards!")
 
 PAGE_STATE = "cci_page_state"
 
@@ -27,6 +28,19 @@ try:
             st.session_state[f"{PAGE_STATE}__network"] = network
             st.session_state[PAGE_STATE] = "date_references"
             st.rerun()
+
+    if st.session_state[PAGE_STATE] == "credit_card":
+
+        # from the provided bank and network, retrieve all credit cards matching
+        matching_ccs = {
+            key
+            for key, value in CreditCard.registry.items()
+            if value.bank.name == st.session_state[f"{PAGE_STATE}__bank"]
+            and value.network.name == st.session_state[f"{PAGE_STATE}__network"]
+        }
+
+        # use the retrieved ccs here:
+        credit_card = st.selectbox("Select Credit Card", matching_ccs)
 
     if st.session_state[PAGE_STATE] == "date_references":
         statement_date = st.select_slider("Select statement date", range(1, 32))
@@ -51,8 +65,31 @@ try:
             st.rerun()
 
     if st.session_state[PAGE_STATE] == "credit_card_instance_submitted":
+
+        # call back-end api
+        body = {
+            "bank": st.session_state[f"{PAGE_STATE}__bank"],
+            "network": st.session_state[f"{PAGE_STATE}__network"],
+            "statement_date": st.session_state[f"{PAGE_STATE}__statement_date"],
+            "due_date_reference": st.session_state[
+                f"{PAGE_STATE}__due_days_after_statement"
+            ],
+            "name": st.session_state[f"{PAGE_STATE}__nickname"],
+        }
+        {
+            "name": "string",
+            "bank": "string",
+            "network": "string",
+            "credit_card": "string",
+            "statement_day": 0,
+            "due_date_reference": 0,
+            "user_id": "string",
+        }
+        requests.post()
+
         st.write(f"Say welcome to {st.session_state[f'{PAGE_STATE}__nickname']}!")
         _logger.info("Submitting credit card info here:")
+
         restart = st.button("Restart")
         if restart:
             st.session_state[PAGE_STATE] = f"{PAGE_STATE}__page_tear_down"

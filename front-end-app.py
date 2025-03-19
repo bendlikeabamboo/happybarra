@@ -18,12 +18,12 @@ login = st.Page("front-end/login.py", title="Access 🐹 happybarra")
 hide_pages(["Home", "Credit Card Installment", "Create Credit Card Instance"])
 
 
-if not st.session_state.get("valid_session", False):
+if not st.session_state.get("login__logged_in", False):
     pages_to_show = [login]
     pg = st.navigation(pages_to_show)
     pg.run()
 
-if st.session_state.get("valid_session", False):
+if st.session_state.get("login__logged_in", False):
     pages_to_show = [home_page, installment_page, credit_card_instance]
     pg = st.navigation(pages_to_show)
     pg.run()
