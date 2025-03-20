@@ -1,14 +1,22 @@
-import streamlit as st
 import logging
-import time
-import requests
 import os
-from happybarra import banks  # noqa: F401
-from happybarra import networks  # noqa: F401
-from happybarra import credit_cards  # noqa: F401
-from happybarra.models import Bank, Network, CreditCard
+import time
+
+import requests
+import streamlit as st
+from dotenv import load_dotenv
+
+from happybarra.frontend.data import (
+    banks,  # noqa: F401
+    credit_cards,  # noqa: F401
+    networks,  # noqa: F401
+)
+from happybarra.frontend.models.models import Bank, CreditCard, Network
 
 _logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
+
+load_dotenv()
 BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 st.markdown("# 💳 Create Credit Card Instance")
@@ -31,7 +39,6 @@ try:
             st.rerun()
 
     if st.session_state[PAGE_STATE] == "credit_card":
-
         # from the provided bank and network, retrieve all credit cards
         matching_ccs = {
             key
@@ -72,22 +79,22 @@ try:
             st.rerun()
 
     if st.session_state[PAGE_STATE] == "credit_card_instance_submitted":
-
         # call back-end api
         body = {
             "name": st.session_state[f"{PAGE_STATE}__nickname"],
             "bank": st.session_state[f"{PAGE_STATE}__bank"],
             "network": st.session_state[f"{PAGE_STATE}__network"],
             "credit_card": st.session_state[f"{PAGE_STATE}__credit_card"],
-            "statement_date": st.session_state[f"{PAGE_STATE}__statement_date"],
+            "statement_day": st.session_state[f"{PAGE_STATE}__statement_date"],
             "due_date_reference": st.session_state[
                 f"{PAGE_STATE}__due_days_after_statement"
             ],
         }
 
-        _logger.info("Submitting credit card info...")
+        api_url = f"{BACKEND_URL}/api/v1/create_credit_card"
+        _logger.info("Submitting credit card info to %s", api_url)
         _logger.debug("%s", body)
-        response = requests.post(f"{BACKEND_URL}/api/v1/create_credit_card", json=body)
+        response = requests.post(api_url, json=body)
         if response.ok:
             _logger.info("Credit Card info submitted.")
             st.write(f"Say welcome to {st.session_state[f'{PAGE_STATE}__nickname']}!")

@@ -1,9 +1,14 @@
 import datetime as dt
-from dateutil.relativedelta import relativedelta
-from typing import TypeVar
+import logging
 from functools import wraps
+from typing import TypeVar
 
-from happybarra.enums import CalendarDirection, WeekEndPolicy
+from dateutil.relativedelta import relativedelta
+
+from happybarra.frontend.models.enums import CalendarDirection, WeekEndPolicy
+
+_logger = logging.getLogger(__name__)
+
 
 T = TypeVar("T")
 
@@ -100,3 +105,21 @@ def instance_registry(cls: T) -> T:
     cls.__init__ = new_init
     cls.__annotations__["registry"] = dict
     return cls
+
+
+def logged(func, logger: logging.Logger = None):
+    logger = _logger or logger
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        logger.debug(
+            "Executing %s with the following arguments: {'args'='%s', 'kwargs'='%s'",
+            func.__name__,
+            args,
+            kwargs,
+        )
+        result = func(*args, **kwargs)
+        logger.debug("%s execution done", func.__name__)
+        return result
+
+    return wrapper

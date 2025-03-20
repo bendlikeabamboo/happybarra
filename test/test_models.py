@@ -8,14 +8,13 @@ from happybarra.enums import (
     WeekEndPolicy,
 )
 from happybarra.models import (
-    CreditCardInstallment,
-    CreditCardInstance,
     Bank,
     CreditCard,
+    CreditCardInstallment,
+    CreditCardInstance,
     Network,
 )
 from happybarra.utils import weekend_check
-
 
 # ======================================================================================
 # USUAL CASE OF CC SETUP

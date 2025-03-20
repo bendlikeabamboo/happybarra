@@ -1,6 +1,5 @@
 from happybarra.models import Network
 
-
-VISA = Network(name="VISA")
+VISA = Network(name="Visa")
 MASTERCARD = Network(name="Mastercard")
 JCB = Network(name="JCB")

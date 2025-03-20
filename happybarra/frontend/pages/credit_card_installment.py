@@ -2,17 +2,20 @@ import logging
 
 import pandas as pd
 import streamlit as st
-from happybarra.models import (
+
+from happybarra.frontend.data import (
+    banks,
+    credit_cards,
+    networks,  # noqa: F401
+)
+from happybarra.frontend.models.enums import InstallmentAmountType
+from happybarra.frontend.models.models import (
+    Bank,
     CreditCard,
     CreditCardInstallment,
-    Bank,
-    Network,
     CreditCardInstance,
+    Network,
 )
-from happybarra.enums import InstallmentAmountType
-from happybarra import banks  # noqa: F401
-from happybarra import networks  # noqa: F401
-from happybarra import credit_cards  # noqa: F401
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)
