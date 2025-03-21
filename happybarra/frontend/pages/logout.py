@@ -42,7 +42,7 @@ if logged_in:
         with st.spinner("Logging out...", show_time=True):
             try:
                 # response = requests.post(
-                #     f"{BACKEND_URL}/api/v1/login",
+                #     f"{BACKEND_URL}/api/v1/logout",
                 #     json={"email": email, "password": password},
                 # )
 

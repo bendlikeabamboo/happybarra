@@ -30,7 +30,6 @@ if st.session_state.get(f"{PAGE_NAME}__invalid_combination_chosen", False):
     # again.
     st.session_state[f"{PAGE_NAME}__invalid_combination_chosen"] = False
 
-
 # Bank and network subpage
 if st.session_state[f"{PAGE_NAME}__page_key"] == "bank_and_network_selection":
     _logger.debug("Asking for bank and network")
