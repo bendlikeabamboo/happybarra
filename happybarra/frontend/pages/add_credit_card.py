@@ -121,7 +121,9 @@ if st.session_state[PAGE_NAME] == "credit_card_instance_submitted":
         "network": st.session_state[f"{PAGE_NAME}__network"],
         "credit_card": st.session_state[f"{PAGE_NAME}__credit_card"],
         "statement_day": st.session_state[f"{PAGE_NAME}__statement_date"],
-        "due_date_reference": st.session_state[f"{PAGE_NAME}__due_days_after_statement"],
+        "due_date_reference": st.session_state[
+            f"{PAGE_NAME}__due_days_after_statement"
+        ],
     }
 
     # build the url

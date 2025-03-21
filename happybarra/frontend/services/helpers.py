@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
 
+
 def safe_date(
     year, month, day, direction: CalendarDirection = CalendarDirection.DOWN
 ) -> dt.date:

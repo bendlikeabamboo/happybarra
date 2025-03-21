@@ -37,15 +37,11 @@ st.set_page_config(page_title="happybarra", page_icon="🐹")
 # Define the pages
 #
 
-home = st.Page("pages/home.py", title="Home")
-installment = st.Page(
-    "pages/credit_card_installment.py", title="Credit Card Installment"
-)
-credit_card = st.Page(
-    "pages/add_credit_card.py", title="Add Credit Card Tracker"
-)
+home = st.Page("pages/home.py", title="🏠 Home")
+installment = st.Page("pages/installment_schedule.py", title="🗓️ Installment Schedule")
+credit_card = st.Page("pages/add_credit_card.py", title="💳 Add Credit Card Tracker")
 login = st.Page("pages/login.py", title="Access 🐹 happybarra")
-logout = st.Page("pages/logout.py", title="Logout")
+logout = st.Page("pages/logout.py", title="⬅️ Logout")
 # hide_pages(["Home", "Credit Card Installment", "Create Credit Card Instance"])
 
 #

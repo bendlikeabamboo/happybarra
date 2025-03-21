@@ -50,6 +50,7 @@ if logged_in:
                 # NOTE: this doesn't authenticate you with the database so inserts will
                 # mostly be an RLS violation
                 import time
+
                 time.sleep(2)
                 response = SimpleNamespace(ok=True)
 

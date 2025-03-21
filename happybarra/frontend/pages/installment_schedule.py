@@ -15,7 +15,7 @@ from happybarra.frontend.models.models import (
 PAGE_NAME = "credit_card_installment"
 _logger = logging.getLogger(f"happybarra.{PAGE_NAME}")
 
-st.markdown("# 🗓️ Credit Card Installment")
+st.markdown("# 🗓️ Installment Schedule")
 st.markdown("Get a list of your installment due dates 😉.")
 
 # Initialize the app
