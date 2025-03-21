@@ -1,21 +1,22 @@
 import datetime as dt
+import logging
 from dataclasses import dataclass, field
 from decimal import Decimal
-import logging
 from typing import List
+
 from pydantic import BaseModel
 
-from happybarra.enums import (
+from happybarra.frontend.models.enums import (
     DueDateType,
     InstallmentAmountType,
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.utils import (
+from happybarra.frontend.services.helpers import (
+    instance_registry,
     safe_date,
     this_day_next_month,
     weekend_check,
-    instance_registry,
 )
 
 _logger = logging.getLogger(__name__)
@@ -170,13 +171,3 @@ class CreditCardInstallment:
                 next_statement_date, self.credit_card_instance.statement_day
             )
         return dates
-
-
-if __name__ == "__main__":
-    bank = Bank("BankA")
-    bank = Bank("BankB")
-    print(Bank.registry)
-    cc = CreditCard(Bank, "sample cc", "Network")
-    cci = CreditCardInstance(cc, 1, 2)
-    ccin = CreditCardInstallment(cci, 3, dt.date(2025, 3, 7), 500.00)
-    print(ccin.get_charge_dates())

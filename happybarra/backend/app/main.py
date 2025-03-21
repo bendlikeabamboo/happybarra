@@ -1,14 +1,14 @@
-import os
 import logging
+import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 from supabase import Client, create_client
-from functools import wraps
+
+from happybarra.frontend.services.helpers import logged
 
 logging.basicConfig(level=logging.DEBUG)
-
 _logger = logging.getLogger(__name__)
 
 
@@ -20,25 +20,7 @@ key: str = os.environ.get("SUPABASE_ANON_KEY")
 supabase: Client = create_client(url, key)
 
 
-def logged(func, logger: logging.Logger = None):
-    logger = _logger or logger
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        logger.debug(
-            "Executing %s with the following arguments: {'args'='%s', 'kwargs'='%s'",
-            func.__name__,
-            args,
-            kwargs,
-        )
-        result = func(*args, **kwargs)
-        logger.debug("%s execution done", func.__name__)
-        return result
-
-    return wrapper
-
-
-@logged
+@logged(logger=_logger)
 def get_bank(name: str = ""):
     response = supabase.table("bank").select("*").eq("alias", name).execute()
     _logger.debug(response)
@@ -58,7 +40,7 @@ def get_bank(name: str = ""):
     return dict(response)["data"][0]
 
 
-@logged
+@logged(logger=_logger)
 def get_network(name: str = ""):
     response = supabase.table("network").select("*").eq("name", name).execute()
     _logger.debug(response)
@@ -68,9 +50,9 @@ def get_network(name: str = ""):
         assert len(dict(response)["data"]) == 1
     except AssertionError as assert_error:
         if len(dict(response)["data"]) > 1:
-            msg = "Error: database returned multiple items. \n\%"
+            msg = "Error: database returned multiple items. \n %s"
         else:
-            msg = "Database did not return anything. \n\%"
+            msg = "Database did not return anything. \n %s"
         _logger.error(msg % assert_error)
         raise AssertionError(msg)
 
@@ -78,7 +60,7 @@ def get_network(name: str = ""):
     return dict(response)["data"][0]
 
 
-@logged
+@logged(logger=_logger)
 def get_credit_card(name: str = "", bank: str = "", network: str = "") -> dict:
     """
     Something something
@@ -140,7 +122,7 @@ class CreditCardInstanceCreationModel(BaseModel):
     due_date_reference: int
 
 
-@logged
+@logged(logger=_logger)
 def post_credit_card_instance(
     credit_card_instance_request: CreditCardInstanceCreationModel,
 ):
@@ -161,6 +143,8 @@ def post_credit_card_instance(
                 "statement_day": credit_card_instance_request.statement_day,
                 "due_date_reference": credit_card_instance_request.statement_day,
                 "user_id": user_id,
+                # for quick development, use this
+                # "user_id": "4b69e475-9202-47f0-a853-a9c92428b2eb",
             }
         )
         .execute()
@@ -170,11 +154,11 @@ def post_credit_card_instance(
 
 @app.post("/api/v1/create_credit_card")
 async def api_post_credit_card_instance(
-    credit_card_instance_request: CreditCardInstanceCreationModel,
+    request_body: dict,
 ):
-    return post_credit_card_instance(
-        credit_card_instance_request=credit_card_instance_request
-    )
+    _logger.debug("cci_request: %s", request_body)
+    modeled_request = CreditCardInstanceCreationModel(**request_body)
+    return post_credit_card_instance(credit_card_instance_request=modeled_request)
 
 
 class LoginRequest(BaseModel):
@@ -187,7 +171,7 @@ class LoginResponse(BaseModel):
     refresh_token: str
 
 
-@logged
+@logged(logger=_logger)
 def post_login(login_request: LoginRequest):
     response = supabase.auth.sign_in_with_password(
         {
@@ -214,7 +198,7 @@ class LogoutResponse(BaseModel):
     msg: str
 
 
-@logged
+@logged(logger=_logger)
 def post_logout() -> LogoutResponse:
     supabase.auth.sign_out()
     return LogoutResponse(msg="success")

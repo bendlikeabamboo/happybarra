@@ -1,0 +1,771 @@
+---
+-
+    id: 049da26b-dc25-41e4-a6a2-e716b0e012a5
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Edge Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 04f715ff-f82a-4b5e-a2f6-20e7ceed1e76
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Rewards Visa Platinum Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 06d4b3ce-4485-46f3-b1bc-28bf2124e691
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Platinum Mastercard
+    bank_id: 05c3f8ca-1ca6-4b19-83f4-f8b13b545bc7
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 09bff3f8-0512-4ce0-8f19-a0489128bd36
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank Titanium Mastercard
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 0d0f8bb3-9acd-4642-b040-1dea01ecf794
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank Travel Signature Visa
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 10a40fc2-9249-4519-91c7-b083f9cedcf0
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank M Free Card
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 11af39cf-e6fc-41d9-a6c9-8cabd9b6a0f9
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Cashback Platinum
+    bank_id: 05c3f8ca-1ca6-4b19-83f4-f8b13b545bc7
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 15228c0d-2d9d-407f-a97e-efffb38c142a
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Miles+ Platinum Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 1cdad3f2-32e9-4cf3-bae0-550296cdb049
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: World Wide Fund Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 233db47f-255a-4018-99eb-7c94add54e6e
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest JCB Gold
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: d222afc2-843b-4144-ad10-93daef3464a0
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 2614e812-9f72-472a-b49f-439d8c9ba6e1
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Assumption Alumni Association Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 26a77913-be1f-4a95-a483-79ffb799ff8f
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Don Bosco Alumni Association Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 29030457-321c-4d76-956c-200fa20d43f4
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Mercury Visa
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 2a05abdb-a8df-42fd-bf9e-827f7701c107
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Gold Rewards Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 2bc451a2-4a8a-4cfe-b254-ca4b972d884a
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Singapore Airlines KrisFlyer Platinum Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 2d356e21-0b71-47cc-9974-0ad1a2652a2b
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Singapore Airlines KrisFlyer World Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: d222afc2-843b-4144-ad10-93daef3464a0
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 337fc352-50d6-4db5-9704-d736e0820cc4
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Wave Mastercard
+    bank_id: 05c3f8ca-1ca6-4b19-83f4-f8b13b545bc7
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 3e26339e-6a71-417c-84c2-80dd7cd5bb72
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Amore Cashback Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 4097dfa1-5331-4604-afd8-55bcf1d53f87
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Classic Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 43ab9867-b5d0-4cf0-ad3d-b6935b8b6be5
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Ateneo Alumni Association Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 440c928c-d3f6-4542-b1bc-0881998e49b9
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Cebu Pacific Gold Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 44e6ea90-b671-4c70-a704-152f5b8c2847
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Rewards Platinum Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 45f1b8a6-b930-488f-93f6-1742f622583f
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Dolce Vita Titanium Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 496e5135-a4a3-4825-bf72-f6902ca73069
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Go Rewards Platinum Visa Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 594b77eb-e447-434f-9e24-b8d1391d4e13
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest JCB Platinum
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: d222afc2-843b-4144-ad10-93daef3464a0
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 5cbe2703-fe56-4664-98f4-51c1ac1f3704
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Platinum Rewards Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 5f4db471-3f68-46dd-9db2-fe25b82cd046
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Amore Platinum Cashback Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 618a7330-5588-4a68-a3a4-ba28eb835306
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank Platinum Mastercard
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 6500b79e-6510-45de-9912-d7b137284427
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Gold Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 6b40765d-edaf-412a-8033-f1a5ee6ddebc
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank Cashback Card
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 6f534b0f-a530-4053-911e-7c1ba5fe260c
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Toyota Card
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 7327d4d8-7ac6-47cc-aeb1-f9a50bd05a7d
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Lazada Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 744c5764-ec7a-4156-b99c-1c509bf7e792
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: PSBank Credit Mastercard
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 7ced9698-ef9c-4162-99ba-f5fd2c441701
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Gold Visa
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 7d1f7c70-3aa1-4374-ba5b-dcf48946eb64
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Platinum Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 7df4c440-2dd6-4797-9181-0169cabfaca2
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Signature Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 80bc24fc-2cbf-45c3-93c4-9c455e6cbedf
+    created_at: 2025-03-11 00:25:17.442415+00
+    name: BPI Rewards Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 81da4189-aca4-4fb3-a2e3-35cb3e6b21be
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: U Visa Platinum
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 87529ab5-b714-41d2-9da7-38103ba12c35
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Reserve World Elite Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 87da2945-85f3-4341-b889-083442e33ec7
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Priority Visa Infinite
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 9526f1e1-6098-44a8-8989-7c7e581cde04
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Reserve Visa Infinite
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 963f9e86-a381-4b9c-a326-f171f5340be3
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI DOS Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 96607e2d-3527-401e-8315-94c214c75e4c
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Shell Power Visa Platinum
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 979f1044-3c5e-466c-b06f-c81246e8bf50
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Cash Back Titanium Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 98b1a784-b873-4d6f-ad84-c2e9d8f436ce
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Couples for Christ Foundation for Family and Life Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: 9cb5a2ab-a656-4f50-80e4-7313649b14d7
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Visa Platinum
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: a34a7da7-c8f2-4574-96dd-8fdf8cfbc845
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Cebu Pacific Platinum Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: a4b75ea6-38a7-41c0-bd75-8c406a69ca1a
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest EveryDay Titanium Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: a6ed3174-24dd-41b2-b327-be2e53072679
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Privilege Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: a6ed86ed-876a-4fad-9744-b1020519d788
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: PlayEveryday
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: ac164c6d-a50b-42e1-8d51-7e15bed2cbd4
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Miles+ World Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: b227fccd-064e-4a74-8639-923deb219e0d
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Corporate Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: b5e79e8d-22a9-46e1-9706-27bfe7abb83a
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Go Rewards Gold Visa Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: b660dc90-0acd-454c-8adb-345265402fb8
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: BPI Rewards Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: bfbbb546-920e-4335-8a07-bf1be0077e50
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Visa Platinum
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: c16ed856-7594-4492-95ab-36d2858ae25e
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: La Salle Greenhills Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: c53a26ca-2c36-4626-a327-db90addbb7f0
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank S&R Visa Platinum
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: c97a3cfd-6489-4aff-9172-5a2c121f8e77
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: World Mastercard
+    bank_id: 05c3f8ca-1ca6-4b19-83f4-f8b13b545bc7
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: cd67058f-85db-4993-9832-75a7e3d6b8d0
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank World Mastercard
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: d2d01f4c-9523-43ba-bf27-b4bb1f4f8f99
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Robinsons Cashback Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: dbf14374-37cf-4fff-a528-00a692f2f397
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: De La Salle Alumni Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: dea765f4-7eba-43fd-8803-45470df74a31
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Gold Mastercard
+    bank_id: 05c3f8ca-1ca6-4b19-83f4-f8b13b545bc7
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: dfb25b91-0dd2-4950-aa14-bc8ca7d973ba
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Southwestern University Alumni Foundation Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: dfce99be-368a-4e0d-acaa-3d90093d9cbe
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Platinum Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: e0368e65-5281-441f-8389-260178634519
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank Rewards Plus Card
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: e2c4e548-6674-44ba-b712-b70a123d6319
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Suy Sing Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: e71bacd9-72c4-4d3e-b093-49d4ab88ce2d
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Cash Back Visa Platinum Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: e741a74d-a2e6-4078-b095-f266a2ce9fcb
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Gold Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: e865bd68-2efa-44a6-beda-9d399a0de55d
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Platinum Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: e9118d5f-cb8c-4051-b398-51683f0122be
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Platinum Mastercard
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: efa1baf6-d68f-4c44-bb01-0df796b649bb
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Metrobank World Mastercard
+    bank_id: c70a1db6-09a8-4f21-9c22-bf391d5a019b
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: f43c2798-a482-4ba0-9e90-170ad035df4a
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: Petron BPI Card
+    bank_id: 22abb6ba-971e-426d-bd35-13449c9b9044
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: f5242679-fe3a-46d3-af51-6d65d40e9b7b
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Miles+ Visa Signature Credit Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: f7e7505a-596e-4c68-a62a-b3a3ad8650fd
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: U Platinum Mastercard
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 27e61d89-c70c-4b7d-a8ff-9bbcdc516dba
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: fa7db380-0ee6-44e4-b2a6-a727ac503a3e
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: EastWest Privilege Visa
+    bank_id: f370ba29-9454-4224-89cd-afbe73d664bf
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: fb91d84f-da65-489d-bb5f-b41dac19d4e0
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: UnionBank Gold Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY
+-
+    id: fd33fb0b-4f0e-40b7-88da-6e94a095651b
+    created_at: 2025-03-20 01:29:10.365171+00
+    name: University of the Philippines Alumni Association Visa Card
+    bank_id: c8d47d0e-29c1-4809-a731-b1331f812d5c
+    network_id: 75c91927-261d-46f7-ad79-8702069ee714
+    due_date_type: X_DAYS_AFTER
+    due_date_weekend_policy: NEXT_BANK_DAY
+    statement_date_weekend_policy: PREV_BANK_DAY
+    installment_bill_policy: ON_STATEMENT_DAY

@@ -1,6 +1,12 @@
-from happybarra.banks import BPI, UNIONBANK, SECURITY_BANK, METROBANK, EASTWEST
-from happybarra.models import CreditCard as CC
-from happybarra.networks import MASTERCARD, VISA, JCB
+from happybarra.frontend.data.banks import (
+    BPI,
+    EASTWEST,
+    METROBANK,
+    SECURITY_BANK,
+    UNIONBANK,
+)
+from happybarra.frontend.data.networks import JCB, MASTERCARD, VISA
+from happybarra.frontend.models.models import CreditCard as CC
 
 # BPI Credit Cards
 # https://www.bpi.com.ph/personal/cards/credit-cards
@@ -45,7 +51,11 @@ CC(
     network=VISA,
     name="University of the Philippines Alumni Association Visa Card",
 )
-CC(bank=UNIONBANK, network=VISA, name="Southwestern University Alumni Foundation Visa Card")
+CC(
+    bank=UNIONBANK,
+    network=VISA,
+    name="Southwestern University Alumni Foundation Visa Card",
+)
 CC(bank=UNIONBANK, network=VISA, name="UnionBank Corporate Visa Card")
 CC(bank=UNIONBANK, network=VISA, name="Suy Sing Visa Card")
 CC(
@@ -77,10 +87,6 @@ CC(bank=SECURITY_BANK, network=MASTERCARD, name="Cashback Platinum")
 CC(bank=METROBANK, network=VISA, name="Metrobank Cashback Card")
 CC(bank=METROBANK, network=VISA, name="Metrobank Rewards Plus Card")
 CC(bank=METROBANK, network=VISA, name="Metrobank Travel Signature Visa")
-CC(bank=METROBANK, network=VISA, name="")
-CC(bank=METROBANK, network=VISA, name="")
-CC(bank=METROBANK, network=VISA, name="")
-CC(bank=METROBANK, network=VISA, name="")
 CC(bank=METROBANK, network=MASTERCARD, name="Toyota Card")
 CC(bank=METROBANK, network=MASTERCARD, name="Metrobank Titanium Mastercard")
 CC(bank=METROBANK, network=MASTERCARD, name="Metrobank World Mastercard")
@@ -124,7 +130,5 @@ CC(bank=EASTWEST, network=JCB, name="EastWest JCB Gold")
 # TODO: AUB
 # TODO: Landbank LOL
 # TODO: PNB
-
-
-if __name__ == "__main__":
-    print(CC.registry)
+# TODO: Chinabnk
+# TODO: BDO

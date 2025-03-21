@@ -1,4 +1,4 @@
-from happybarra.models import Bank
+from happybarra.frontend.models.models import Bank
 
 BPI = Bank(name="BPI")
 UNIONBANK = Bank(name="Unionbank")
@@ -7,8 +7,3 @@ EASTWEST = Bank(name="Eastwest")
 METROBANK = Bank(name="Metrobank")
 RCBC = Bank(name="RCBC")
 HSBC = Bank(name="HSBC")
-
-if __name__ == "__main__":
-    Sample = Bank("Sample")
-    Sample2 = Bank("Sample2")
-    print(Bank.registry)

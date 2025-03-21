@@ -2,20 +2,19 @@ import datetime as dt
 
 import pytest
 
-from happybarra.enums import (
+from happybarra.frontend.models.enums import (
     InstallmentAmountType,
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.models import (
-    CreditCardInstallment,
-    CreditCardInstance,
+from happybarra.frontend.models.models import (
     Bank,
     CreditCard,
+    CreditCardInstallment,
+    CreditCardInstance,
     Network,
 )
-from happybarra.utils import weekend_check
-
+from happybarra.frontend.services.helpers import weekend_check
 
 # ======================================================================================
 # USUAL CASE OF CC SETUP
