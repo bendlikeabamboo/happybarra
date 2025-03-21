@@ -1,4 +1,4 @@
-from happybarra.models import Network
+from happybarra.frontend.models.models import Network
 
 VISA = Network(name="Visa")
 MASTERCARD = Network(name="Mastercard")

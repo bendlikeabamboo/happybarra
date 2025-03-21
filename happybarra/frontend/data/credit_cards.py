@@ -1,7 +1,15 @@
-from happybarra.banks import BPI, EASTWEST, METROBANK, SECURITY_BANK, UNIONBANK
-from happybarra.models import CreditCard as CC
-from happybarra.networks import JCB, MASTERCARD, VISA
+from happybarra.frontend.data.banks import (
+    BPI,
+    EASTWEST,
+    METROBANK,
+    SECURITY_BANK,
+    UNIONBANK,
+)
+from happybarra.frontend.data.networks import JCB, MASTERCARD, VISA
+from happybarra.frontend.models.models import CreditCard as CC
 
+# BPI Credit Cards
+# https://www.bpi.com.ph/personal/cards/credit-cards
 CC(bank=BPI, network=VISA, name="BPI Signature Card")
 CC(bank=BPI, network=VISA, name="BPI Amore Platinum Cashback Card")
 CC(bank=BPI, network=VISA, name="BPI Amore Cashback Card")
@@ -122,7 +130,5 @@ CC(bank=EASTWEST, network=JCB, name="EastWest JCB Gold")
 # TODO: AUB
 # TODO: Landbank LOL
 # TODO: PNB
-
-
-if __name__ == "__main__":
-    print(CC.registry)
+# TODO: Chinabnk
+# TODO: BDO

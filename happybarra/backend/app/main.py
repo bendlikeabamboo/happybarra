@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from supabase import Client, create_client
 
-from happybarra.utils import logged
+from happybarra.frontend.services.helpers import logged
 
 logging.basicConfig(level=logging.DEBUG)
 _logger = logging.getLogger(__name__)

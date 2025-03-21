@@ -1,4 +1,4 @@
-from happybarra.models import registry
+from happybarra.frontend.models.models import registry
 
 
 @registry

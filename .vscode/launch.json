@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "back-end-app:app",
+                "happybarra.backend.app.main:app",
                 "--reload"
             ],
             "jinja": true

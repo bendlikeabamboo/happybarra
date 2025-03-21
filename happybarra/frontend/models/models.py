@@ -6,13 +6,13 @@ from typing import List
 
 from pydantic import BaseModel
 
-from happybarra.enums import (
+from happybarra.frontend.models.enums import (
     DueDateType,
     InstallmentAmountType,
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.utils import (
+from happybarra.frontend.services.helpers import (
     instance_registry,
     safe_date,
     this_day_next_month,

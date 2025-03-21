@@ -7,7 +7,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 # Create loggers first
-_logger = logging.getLogger("happybarra.login")
+_logger = logging.getLogger("happybarra.logout")
 _logger.debug("Loading environment variables")
 load_dotenv()
 
@@ -18,30 +18,28 @@ BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 #
 # main part
 #
-st.write("👤 happybarra login")
+st.write("## Logout")
+st.write("Are you sure? 🥹")
 
 #
 # ERROR HANDLING
 # If a failed attempt was done whatever the error is, show the error banner
-if st.session_state.get("login__failed_attempt", False):
-    _logger.debug("This is a log-in retry.")
-    st.error("Invalid credentials")
+if st.session_state.get("logout__failed_attempt", False):
+    _logger.debug("This is a log-out retry.")
+    st.error("Logout failed.")
 else:
-    _logger.debug("Fresh log-in")
+    _logger.debug("Fresh log-out")
 
 
-_logger.debug("Assuming logged-out user.")
-logged_in = st.session_state.get("login__logged_in", False)
+_logger.debug("Assuming logged-in user.")
+logged_in = st.session_state.get("login__logged_in", True)
 
-_logger.debug("Asking for login-credentials")
-if not logged_in:
-    email = st.text_input("E-mail address:")
-    password = st.text_input("Password", type="password")
-    creds_submitted = st.button(label="Login")
+if logged_in:
+    log_out = st.button(label="Logout")
 
-    if creds_submitted:
-        _logger.debug("Attempting login request")
-        with st.spinner("Logging in...", show_time=True):
+    if log_out:
+        _logger.debug("Attempting logout request")
+        with st.spinner("Logging out...", show_time=True):
             try:
                 # response = requests.post(
                 #     f"{BACKEND_URL}/api/v1/login",
@@ -57,8 +55,8 @@ if not logged_in:
 
                 # if it's good
                 if response.ok:
-                    _logger.debug("Login successful.")
-                    st.session_state["login__logged_in"] = True
+                    _logger.debug("Logout successful.")
+                    st.session_state["login__logged_in"] = False
                     st.rerun()
 
                 # if it's not
@@ -74,14 +72,13 @@ if not logged_in:
 
             except ValueError as err:
                 _logger.error("Trouble logging in. %s", err)
-                st.session_state["login__logged_in"] = False
-                st.session_state["login__failed_attempt"] = True
-                if "login__failed_attempt_counter" in st.session_state:
-                    st.session_state["login__failed_attempt_counter"] += 1
+                st.session_state["logout__failed_attempt"] = True
+                if "logout__failed_attempt_counter" in st.session_state:
+                    st.session_state["logout__failed_attempt_counter"] += 1
                 else:
-                    st.session_state["login__failed_attempt_counter"] = 1
+                    st.session_state["logout__failed_attempt_counter"] = 1
                 _logger.error(
-                    "Invalid login attempt # %s",
+                    "Invalid logout attempt # %s",
                     st.session_state["login__failed_attempt_counter"],
                 )
                 st.rerun()
