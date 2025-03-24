@@ -1,10 +1,14 @@
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Response
+from fastapi.security import OAuth2PasswordRequestForm
+from gotrue.types import AuthResponse
 from pydantic import BaseModel
-from supabase import AsyncClient
 
-from happybarra.backend.dependencies import supabase
+from happybarra.backend.dependencies import (
+    supabase,
+)
 from happybarra.backend.services.helpers import async_logged
 
 #
@@ -19,50 +23,33 @@ class UserCredentials(BaseModel):
     password: str
 
 
-class LoginResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-
-
 class RefreshToken(BaseModel):
     refresh_token: str
+
+
+class User(BaseModel):
+    id: str
+    email: str
 
 
 @async_logged(_logger)
 @router.post(
     "/login",
 )
-async def enter_matrix(user_credentials: UserCredentials) -> LoginResponse:
+async def login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], response: Response
+):
     """
-    Enter the matrix
+    Retrieve an access token from supabase auth.
     """
-    awaited_supabase: AsyncClient = await supabase
-    response = awaited_supabase.auth.sign_in_with_password(
+    print(form_data)
+    auth_call: AuthResponse = supabase().auth.sign_in_with_password(
         {
-            "email": user_credentials.user,
-            "password": user_credentials.password,
+            "email": form_data.username,
+            "password": form_data.password,
         }
     )
+    print(auth_call.model_dump())
 
-    awaited_response = await response
-    login_response = LoginResponse(
-        access_token=dict(dict(awaited_response)["session"])["access_token"],
-        refresh_token=dict(dict(awaited_response)["session"])["refresh_token"],
-    )
-    return login_response
-
-
-@async_logged(_logger)
-@router.post(
-    "/refresh",
-)
-async def refresh_matrix(refresh_token: RefreshToken):
-    """
-    Enter the matrix
-    """
-    awaited_supabase: AsyncClient = await supabase
-    response = awaited_supabase.auth.refresh_session(**refresh_token.model_dump())
-
-    awaited_response = await response
-    login_response = awaited_response
-    return login_response
+    response.headers["X-Refresh-Token"] = auth_call.session.refresh_token
+    return {"access_token": auth_call.session.access_token, "token_type": "bearer"}

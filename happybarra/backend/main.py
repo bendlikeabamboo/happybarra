@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import banks, security
+from .routers import banks, credit_cards, security
 
 tags_metadata = [
     {
@@ -8,12 +8,13 @@ tags_metadata = [
         "description": "Bank operations my guy",
     },
     {"name": "Security", "description": "PM is the 🔒"},
+    {"name": "Credit Cards", "description": "well, stuff we want (or not) to track"},
 ]
-
 
 app = FastAPI(openapi_tags=tags_metadata)
 app.include_router(banks.router)
 app.include_router(security.router)
+app.include_router(credit_cards.router)
 
 
 @app.get("/")
