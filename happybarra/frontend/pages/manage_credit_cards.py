@@ -1,11 +1,11 @@
 import logging
 import os
+import time
 
 import dotenv
-import streamlit as st
-import requests
 import pandas as pd
-from io import StringIO
+import requests
+import streamlit as st
 
 dotenv.load_dotenv()
 
@@ -26,9 +26,7 @@ st.markdown("""Add, delete, or modify your existing credit cards""")
 @st.cache_data
 def fetch_list_of_credit_cards(*, headers):
     _logger.debug("Fetching lists of credit cards")
-    response = requests.get(
-        f"{BACKEND_URL}/api/v1/credit_cards/credit_cards", headers=headers
-    )
+    response = requests.get(f"{BACKEND_URL}/api/v1/credit_cards", headers=headers)
     return response
 
 
@@ -145,15 +143,83 @@ if st.session_state.get(PAGE_KEY) == PK_CHANGE_STATEMENT_DATE:
     statement_date: int = st.select_slider("Select new statement date", range(1, 32))
     submit = st.button("Submit")
     if submit:
-        credit_card: list = st.session_state[VK_CHOSEN_CREDIT_CARD]
-        credit_card[0]["credit_card_instance__statement_day"] = statement_date
-        print(credit_card)
+        # build out the request body
 
-        st.session_state[VK_CHOSEN_STATEMENT_DATE] = statement_date
-        st.session_state[PAGE_KEY] = PK_OPERATION_SUCCESS
+        # headers
+        access_token = st.session_state.get("login__access_token", None)
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        # request body
+        body = {}
+
+        credit_card: list = st.session_state[VK_CHOSEN_CREDIT_CARD]
+        body["id"] = credit_card[0]["credit_card_instance__id"]
+        body["statement_day"] = str(statement_date)
+
+        with st.spinner(text="Updating your card...", show_time=True):
+            response = requests.post(
+                f"{BACKEND_URL}/api/v1/credit_cards/update_credit_card_statement_date",
+                headers=headers,
+                json=body,
+            )
+
+            if response.ok:
+                _logger.debug("request successful")
+                st.session_state[PAGE_KEY] = PK_OPERATION_SUCCESS
+                st.rerun()
+            else:
+                _logger.debug("request unsuccessful")
+                st.error("Wow somethign went wrong here...")
+                time.sleep(5)
+                st.rerun()
+
+if st.session_state.get(PAGE_KEY) == PK_CHANGE_DUE_DATE_REFERENCE:
+    due_date_reference: int = st.select_slider(
+        "Select new due date reference", range(1, 46)
+    )
+    submit = st.button("Submit")
+    if submit:
+        # build out the request body
+
+        # headers
+        access_token = st.session_state.get("login__access_token", None)
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        # request body
+        body = {}
+
+        credit_card: list = st.session_state[VK_CHOSEN_CREDIT_CARD]
+        body["id"] = credit_card[0]["credit_card_instance__id"]
+        body["due_date_reference"] = int(due_date_reference)
+
+        with st.spinner(text="Updating your card...", show_time=True):
+            response = requests.post(
+                f"{BACKEND_URL}/api/v1/credit_cards/"
+                "update_credit_card_due_date_reference",
+                headers=headers,
+                json=body,
+            )
+            if response.ok:
+                _logger.debug("request successful")
+                st.session_state[PAGE_KEY] = PK_OPERATION_SUCCESS
+                st.rerun()
+            else:
+                _logger.debug("request unsuccessful")
+                st.error("Wow something went wrong here...")
+                time.sleep(5)
+                st.rerun()
+
+if st.session_state.get(PAGE_KEY) == PK_OPERATION_SUCCESS:
+    st.success(body="Credit card updated 🎉")
+    go_back = st.button(label="Go back")
+    if go_back:
+        keys_to_delete = [key for key in st.session_state if key.startswith(PAGE_KEY)]
+        for key in keys_to_delete:
+            del st.session_state[key]
+        st.session_state[PAGE_KEY] = PK_LANDING
+        fetch_list_of_credit_cards.clear()
         st.rerun()
 
-    # due_days_after_statement = st.select_slider(
-    #     "How many days after your statement is your due date?", range(1, 45)
-    # )
-st.session_state
+# for dev purposes
+if st.session_state.get("happybarra_config__dev_mode", False):
+    st.write(st.session_state)

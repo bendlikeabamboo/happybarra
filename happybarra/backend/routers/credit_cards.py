@@ -1,8 +1,9 @@
 import logging
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from gotrue import UserResponse
 
 from happybarra.backend.dependencies import (
     Client,
@@ -65,8 +66,78 @@ async def yoink_credit_cards_by_user(
     return CreditCards(**response.model_dump())
 
 
+class CreditCardCreationForm(BaseModel):
+    name: str
+    credit_card: str
+    statement_day: str
+    due_date_reference: int
+
+
 @async_logged(_logger)
-@router.get("/credit_cards")
+@router.put("")
+async def add_credit_card(
+    credit_card_to_add: CreditCardCreationForm,
+    authorization: str = Depends(apikey_scheme),
+):
+    """
+    Add credit card to user
+    """
+    verify_auth_header(authorization=authorization)
+
+    # first get the id of the credit card
+    response = (
+        supabase()
+        .table("credit_card")
+        .select("*")
+        .eq("name", credit_card_to_add.credit_card)
+        .execute()
+    )
+
+    # validate the fetched credit card
+    response_data: list = response.model_dump()["data"]
+    if len(response_data) == 0:
+        raise HTTPException(
+            status_code=404,
+            detail={"msg": f"Credit card not found: {credit_card_to_add.credit_card}"},
+        )
+    elif len(response_data) != 1:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "msg": f"There are mutiple credit cards associated with the "
+                f"selected credit card: {credit_card_to_add.credit_card}. "
+                "Contact Developer"
+            },
+        )
+
+    fetched_credit_card_id = response_data[0]["id"]
+
+    # then get the user
+    jwt_key = authorization[len("Bearer "):]
+    _logger.debug("Authorization being used: %s", jwt_key)
+    response: UserResponse = supabase().auth.get_user(jwt_key)
+    user_id = response.user.id
+
+    # use the fetched credit card and fetched user to build the request
+    request_body = {}
+    request_body["name"] = credit_card_to_add.name
+    request_body["statement_day"] = str(credit_card_to_add.statement_day)
+    request_body["due_date_reference"] = int(credit_card_to_add.due_date_reference)
+    request_body["credit_card_id"] = fetched_credit_card_id
+    request_body["user_id"] = user_id
+
+    request = supabase().table("credit_card_instance").insert(request_body)
+
+    # build the headers for the request then update the header
+    key_dict = {"Authorization": authorization}
+    request.headers = key_dict or request.headers.update(key_dict)
+
+    response = request.execute()
+    return response.model_dump()
+
+
+@async_logged(_logger)
+@router.get("")
 async def yoink_credit_cards(authorization: str = Depends(apikey_scheme)):
     """
     Retrieve credit card instances that belong to the logged-in user

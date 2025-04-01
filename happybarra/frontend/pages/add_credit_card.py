@@ -82,21 +82,10 @@ if st.session_state[PAGE_NAME] == "credit_card":
 
     # use the retrieved ccs here:
     credit_card = st.selectbox("Select Credit Card", matching_ccs)
-    btn = sac.buttons(
-        items=["Submit", "Go back"],
-        index=0,
-        format_func="title",
-        align="left",
-        direction="horizontal",
-        radius="lg",
-        return_index=False,
-    )
-    if btn == "Submit":
+    btn = st.button(label="Submit")
+    if btn:
         st.session_state[f"{PAGE_NAME}__credit_card"] = credit_card
         st.session_state[PAGE_NAME] = "date_references"
-        st.rerun()
-    elif btn == "Go back":
-        st.session_state[PAGE_NAME] = "bank_and_network"
         st.rerun()
 
 # date references selection
@@ -126,21 +115,23 @@ if st.session_state[PAGE_NAME] == "credit_card_nickname":
 if st.session_state[PAGE_NAME] == "credit_card_instance_submitted":
     # Let's now call the back-end
 
-    # build the request body first
+    # build the url
+    api_url = f"{BACKEND_URL}/api/v1/credit_cards"
+    _logger.info("Submitting credit card info to %s", api_url)
+
+    # build the headers
+    access_token = st.session_state.get("login__access_token", None)
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # build the request body
     body = {
         "name": st.session_state[f"{PAGE_NAME}__nickname"],
-        "bank": st.session_state[f"{PAGE_NAME}__bank"],
-        "network": st.session_state[f"{PAGE_NAME}__network"],
         "credit_card": st.session_state[f"{PAGE_NAME}__credit_card"],
-        "statement_day": st.session_state[f"{PAGE_NAME}__statement_date"],
-        "due_date_reference": st.session_state[
-            f"{PAGE_NAME}__due_days_after_statement"
-        ],
+        "statement_day": str(st.session_state[f"{PAGE_NAME}__statement_date"]),
+        "due_date_reference": int(
+            st.session_state[f"{PAGE_NAME}__due_days_after_statement"]
+        ),
     }
-
-    # build the url
-    api_url = f"{BACKEND_URL}/api/v1/create_credit_card"
-    _logger.info("Submitting credit card info to %s", api_url)
     _logger.debug("%s", body)
 
     # do the request
@@ -159,7 +150,7 @@ if st.session_state[PAGE_NAME] == "credit_card_instance_submitted":
 
             # otherwise, do the real api call
             else:
-                response = requests.post(api_url, json=body)
+                response = requests.put(api_url, json=body, headers=headers)
 
             if response.ok:
                 _logger.info("credit card added.")
@@ -192,4 +183,6 @@ if st.session_state[PAGE_NAME] == "credit_card_successfully_added":
         st.session_state[PAGE_NAME] = "bank_and_network"
         st.rerun()
 
-st.write(st.session_state)
+# for dev purposes
+if st.session_state.get("happybarra_config__dev_mode", False):
+    st.write(st.session_state)

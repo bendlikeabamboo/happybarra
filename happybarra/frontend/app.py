@@ -25,7 +25,7 @@ from happybarra.frontend.services import helpers
 @click.option(
     "--dev",
     is_flag=True,
-    help="Bypass the application login for development",
+    help="Will show developer friendly trails ;)",
 )
 def run(use_mocks: bool, bypass_login: bool, dev: bool):
     # There are commands that we only need to run upon the app's initialization.
