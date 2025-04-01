@@ -6,15 +6,14 @@ from gotrue import UserResponse
 from pydantic import BaseModel
 
 from happybarra.backend.dependencies import (
+    APIResponse,
     Client,
+    SyncSelectRequestBuilder,
     apikey_scheme,
     get_authed_supabase_client,
-    oauth2_scheme,
     send_execute_commnad,
     supabase,
     verify_auth_header,
-    SyncSelectRequestBuilder,
-    APIResponse,
 )
 from happybarra.backend.services.helpers import async_logged
 

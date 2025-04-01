@@ -1,8 +1,11 @@
 import datetime as dt
 import logging
+import os
 from functools import wraps
 from typing import TypeVar
 
+import requests
+import streamlit as st
 from dateutil.relativedelta import relativedelta
 
 from happybarra.frontend.models.enums import CalendarDirection, WeekEndPolicy
@@ -14,6 +17,8 @@ T = TypeVar("T")
 
 CONFIG_USE_MOCKS_HOOK = "happybarra_config__use_mocks"
 CONFIG_BYPASS_LOGIN_HOOK = "happybarra_config__bypass_login"
+
+BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 
 def safe_date(
@@ -108,3 +113,10 @@ def instance_registry(cls: T) -> T:
     cls.__init__ = new_init
     cls.__annotations__["registry"] = dict
     return cls
+
+
+@st.cache_data
+def fetch_list_of_credit_cards(*, headers):
+    _logger.debug("Fetching lists of credit cards")
+    response = requests.get(f"{BACKEND_URL}/api/v1/credit_cards", headers=headers)
+    return response

@@ -96,6 +96,10 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         pg = st.navigation(pages_to_show)
         pg.run()
 
+        # for dev purposes
+        if st.session_state.get("happybarra_config__dev_mode", False):
+            st.write(st.session_state)
+
     # if successfully logged in, they will see different set of pages.
     if st.session_state.get("login__logged_in", False):
         #
@@ -108,20 +112,24 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
             "pages/add_credit_card.py", title="💳 Add Credit Card Tracker"
         )
         manage_credit_cards = st.Page(
-            "pages/manage_credit_cards.py", title="📂💳 Manage Credit Cards"
+            "pages/manage_credit_cards.py", title="🛠️ Manage Credit Cards"
         )
         logout = st.Page("pages/logout.py", title="⬅️ Logout")
         pages_to_show = {
             "": [home],
-            "Calculators": [installment],
-            "Account": [credit_card, manage_credit_cards, logout],
+            "Calculators": [
+                installment,
+            ],
+            "Credit Cards": [
+                credit_card,
+                manage_credit_cards,
+            ],
+            "Account": [
+                logout,
+            ],
         }
         pg = st.navigation(pages_to_show)
         pg.run()
-
-    # for dev purposes
-    if st.session_state.get("happybarra_config__dev_mode", False):
-        st.write(st.session_state)
 
 
 if __name__ == "__main__":

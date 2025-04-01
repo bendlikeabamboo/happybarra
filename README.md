@@ -13,10 +13,10 @@ do you have enough money for this? (a personal finance application)
  
 ### User Credit Cards Management
 - [x] Add a credit card
-- [ ] Manage credit cards
+- [x] Manage credit cards
     - [x] Modify credit card statement date
     - [x] Modify credit card due date reference
-    - [ ] Delete credit card
+    - [x] Delete credit card
 
 
 ## Roadmap: Up Next

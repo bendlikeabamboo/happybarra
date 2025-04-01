@@ -145,4 +145,3 @@ if st.session_state[f"{PAGE_NAME}__page_key"] == "installment_list":
 # for dev purposes
 if st.session_state.get("happybarra_config__dev_mode", False):
     st.write(st.session_state)
-
