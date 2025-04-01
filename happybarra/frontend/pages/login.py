@@ -58,15 +58,23 @@ if creds_submitted:
 
             # For the production case, you will use the back-end API itself
             else:
-                response = requests.post(
-                    f"{BACKEND_URL}/api/v1/login",
-                    json={"email": email, "password": password},
+                response: requests.Response = requests.post(
+                    f"{BACKEND_URL}/api/v1/security/login",
+                    data={"username": email, "password": password},
                 )
 
             # if it's good
             if response.ok:
                 _logger.debug("Login successful.")
                 st.session_state["login__logged_in"] = True
+                st.session_state["login__access_token"] = response.json()[
+                    "access_token"
+                ]
+                st.session_state["login__token_type"] = response.json()["token_type"]
+                st.session_state["login__refresh_token"] = response.json()[
+                    "refresh_token"
+                ]
+
                 st.rerun()
 
             # if it's not
@@ -94,5 +102,6 @@ if creds_submitted:
             )
             st.rerun()
 
-# for debugging
-# st.write(st.session_state)
+# for dev purposes
+if st.session_state.get("happybarra_config__dev_mode", False):
+    st.write(st.session_state)

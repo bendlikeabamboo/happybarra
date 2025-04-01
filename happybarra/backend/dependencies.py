@@ -3,8 +3,10 @@ import os
 from typing import Annotated
 
 from dotenv import load_dotenv
-from fastapi import Depends, Header
+from fastapi import Depends, Header, HTTPException
 from fastapi.security import APIKeyHeader, OAuth2PasswordBearer
+from postgrest._sync.request_builder import APIResponse, SyncSelectRequestBuilder
+from postgrest.exceptions import APIError
 from pydantic import BaseModel
 from supabase import Client, create_client
 
@@ -57,3 +59,34 @@ async def get_authed_supabase_client(
 
 async def rcv_acc_token(token: str):
     return {"Authorization": f"Bearer {token}"}
+
+
+def send_execute_commnad(request: SyncSelectRequestBuilder) -> APIResponse:
+    """
+    Yet another redirection so that we handle all errors in this one function.
+    """
+    try:
+        response = request.execute()
+    except APIError as err:
+        headers = {
+            "WWW-Authenticate": 'Bearer error="invalid_token", '
+            'error_description="The access token expired"'
+        }
+        err_msg = f"{err}. Please login again."
+
+        raise HTTPException(status_code=401, detail=err_msg, headers=headers)
+    return response
+
+
+def verify_auth_header(authorization: str):
+    """
+    Just to check the auth header
+    """
+    if not authorization:
+        raise HTTPException(
+            status_code=401, detail="No doba doba provided. Mirku sadge."
+        )
+    if "Bearer " not in authorization:
+        raise HTTPException(
+            status_code=401, detail="doba doba seems dysfunctional. Mirku Sadge"
+        )

@@ -22,7 +22,12 @@ from happybarra.frontend.services import helpers
     is_flag=True,
     help="Bypass the application login for development",
 )
-def run(use_mocks: bool, bypass_login: bool):
+@click.option(
+    "--dev",
+    is_flag=True,
+    help="Bypass the application login for development",
+)
+def run(use_mocks: bool, bypass_login: bool, dev: bool):
     # There are commands that we only need to run upon the app's initialization.
     # We put them in this conditional branch.
     if not st.session_state.get("happybarra_config__app_init_state_logged", False):
@@ -32,6 +37,10 @@ def run(use_mocks: bool, bypass_login: bool):
         else:
             # Add logic to use actual API calls
             click.echo("\n[[ HAPPYBARRA ]] Running with real backend API calls.")
+        if dev:
+            # Show session state at the end of the page.
+            click.echo("\n[[ HAPPYBARRA ]] Running on dev mode")
+            st.session_state["happybarra_config__dev_mode"] = True
 
         setup_logging()
 
@@ -68,19 +77,6 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
     st.set_page_config(page_title="happybarra", page_icon="🐹")
 
     #
-    ## Define the pages
-    home = st.Page("pages/home.py", title="🏠 Home")
-    installment = st.Page(
-        "pages/installment_schedule.py", title="🗓️ Installment Schedule"
-    )
-    credit_card = st.Page(
-        "pages/add_credit_card.py", title="💳 Add Credit Card Tracker"
-    )
-    login = st.Page("pages/login.py", title="Access 🐹 happybarra")
-    logout = st.Page("pages/logout.py", title="⬅️ Logout")
-    # hide_pages(["Home", "Credit Card Installment", "Create Credit Card Instance"])
-
-    #
     # PAGE CONTROL
     # At first only show login. After successfully logging in, you can now access the
     # other pages.
@@ -92,19 +88,40 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
 
     # if it's not, then show login
     if not st.session_state.get("login__logged_in", False):
+        #
+        ## Define the pages
+        login = st.Page("pages/login.py", title="Access 🐹 happybarra")
+
         pages_to_show = {"Login": [login]}
         pg = st.navigation(pages_to_show)
         pg.run()
 
-    # if successfully loggerd in, they will see different set of pages.
+    # if successfully logged in, they will see different set of pages.
     if st.session_state.get("login__logged_in", False):
+        #
+        ## Define the pages
+        home = st.Page("pages/home.py", title="🏠 Home")
+        installment = st.Page(
+            "pages/installment_schedule.py", title="🗓️ Installment Schedule"
+        )
+        credit_card = st.Page(
+            "pages/add_credit_card.py", title="💳 Add Credit Card Tracker"
+        )
+        manage_credit_cards = st.Page(
+            "pages/manage_credit_cards.py", title="📂💳 Manage Credit Cards"
+        )
+        logout = st.Page("pages/logout.py", title="⬅️ Logout")
         pages_to_show = {
             "": [home],
             "Calculators": [installment],
-            "Account": [credit_card, logout],
+            "Account": [credit_card, manage_credit_cards, logout],
         }
         pg = st.navigation(pages_to_show)
         pg.run()
+
+    # for dev purposes
+    if st.session_state.get("happybarra_config__dev_mode", False):
+        st.write(st.session_state)
 
 
 if __name__ == "__main__":

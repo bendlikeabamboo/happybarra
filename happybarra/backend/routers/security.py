@@ -32,13 +32,20 @@ class User(BaseModel):
     email: str
 
 
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    refresh_token: str
+
+
 @async_logged(_logger)
 @router.post(
     "/login",
 )
 async def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], response: Response
-):
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    response: Response = None,
+) -> LoginResponse:
     """
     Retrieve an access token from supabase auth.
     """
@@ -50,6 +57,9 @@ async def login(
         }
     )
     print(auth_call.model_dump())
-
     response.headers["X-Refresh-Token"] = auth_call.session.refresh_token
-    return {"access_token": auth_call.session.access_token, "token_type": "bearer"}
+    return LoginResponse(
+        access_token=auth_call.session.access_token,
+        token_type="bearer",
+        refresh_token=auth_call.session.refresh_token,
+    )

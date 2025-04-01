@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+import os
+import yaml
+import logging
 
 from .routers import banks, credit_cards, security
 
@@ -10,6 +13,26 @@ tags_metadata = [
     {"name": "Security", "description": "PM is the 🔒"},
     {"name": "Credit Cards", "description": "well, stuff we want (or not) to track"},
 ]
+
+def setup_logging():
+    # Let's setup the logging
+
+    # Figure out the pathing for the log config
+    script_path = os.path.abspath(__file__)
+    dir_name = os.path.dirname(script_path)
+    config_path = os.path.join(dir_name, "debug_logging_conf.yaml")
+
+    # Then load the config yaml to setup the logging
+    with open(config_path, "rt") as file:
+        config = yaml.safe_load(file.read())
+    logging.config.dictConfig(config=config)
+
+    # Now let's get a logger for this module.
+    _logger = logging.getLogger("happybarra")
+    _logger.info("🐹 initialized")
+    # Logger setup done.
+
+setup_logging()
 
 app = FastAPI(openapi_tags=tags_metadata)
 app.include_router(banks.router)

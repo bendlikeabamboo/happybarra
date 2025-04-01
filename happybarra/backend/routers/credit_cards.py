@@ -1,7 +1,7 @@
 import logging
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from happybarra.backend.dependencies import (
@@ -9,8 +9,9 @@ from happybarra.backend.dependencies import (
     apikey_scheme,
     get_authed_supabase_client,
     oauth2_scheme,
-    rcv_acc_token,
+    send_execute_commnad,
     supabase,
+    verify_auth_header,
 )
 from happybarra.backend.services.helpers import async_logged
 
@@ -49,12 +50,13 @@ class CreditCards(BaseModel):
 
 
 @async_logged(_logger)
-@router.get("/credit_cards")
+@router.get("/credit_cards_with_refresh")
 async def yoink_credit_cards_by_user(
     authed_supabase_client: Annotated[Client, Depends(get_authed_supabase_client)],
 ):
     """
-    Retrieve credit card instances that belong to the logged-in user
+    ⚠️ FOR DEPRECATION | Retrieve credit card instances that belong to the logged-in
+    user
     """
     response = (
         authed_supabase_client.table("credit_card_instance_map").select("*").execute()
@@ -64,47 +66,95 @@ async def yoink_credit_cards_by_user(
 
 
 @async_logged(_logger)
-@router.get("/credit_cards_fast")
-async def yoink_fast():
+@router.get("/credit_cards")
+async def yoink_credit_cards(authorization: str = Depends(apikey_scheme)):
     """
     Retrieve credit card instances that belong to the logged-in user
     """
-    access_token = "--.--.--"
-    request = supabase().table("credit_card_instance_map").select("*")
-    request.headers = {
-        "Authorization": f"Bearer {access_token}"
-    } or request.headers.update({"Authorization": f"Bearer {access_token}"})
-    response = request.execute()
-    return CreditCards(**response.model_dump())
-
-
-@async_logged(_logger)
-@router.get("/credit_cards_fasther")
-async def yoink_fasther(auth_dict: Annotated[dict, Depends(rcv_acc_token)]):
-    """
-    Retrieve credit card instances that belong to the logged-in user
-    """
-    request = supabase().table("credit_card_instance_map").select("*")
-    request.headers = auth_dict or request.headers.update(auth_dict)
-    response = request.execute()
-    return CreditCards(**response.model_dump())
-
-
-@async_logged(_logger)
-@router.get("/credit_cards_fastherest")
-async def yoink_fastherest(authorization: str = Depends(apikey_scheme)):
-    """
-    Retrieve credit card instances that belong to the logged-in user
-    """
-    if not authorization:
-        HTTPException(status_code=401, detail="No doba doba provided. Mirku sadge.")
-    if "Bearer " not in authorization:
-        raise HTTPException(
-            status_code=401, detail="doba doba seems dysfunctional. Mirku Sadge"
-        )
+    verify_auth_header(authorization=authorization)
 
     request = supabase().table("credit_card_instance_map").select("*")
+
+    # build the headers for the request then update the header
     key_dict = {"Authorization": authorization}
     request.headers = key_dict or request.headers.update(key_dict)
-    response = request.execute()
+
+    # execute the command
+    response = send_execute_commnad(request=request)
+
+    # return the dataclass
     return CreditCards(**response.model_dump())
+
+
+class CreditCardStatementDayUpdate(BaseModel):
+    id: str
+    statement_day: str
+
+
+@async_logged(_logger)
+@router.post("/update_credit_card_statement_date")
+async def update_credit_card_statement_date(
+    modified_credit_card_instance: CreditCardStatementDayUpdate,
+    authorization: str = Depends(apikey_scheme),
+):
+    """
+    Retrieve credit card instances that belong to the logged-in user
+    """
+    verify_auth_header(authorization=authorization)
+
+    _logger.debug("Instance to be modified: %s", modified_credit_card_instance)
+    # prepare the request
+    request = (
+        supabase()
+        .table("credit_card_instance")
+        .update(modified_credit_card_instance.model_dump())
+        .eq("id", modified_credit_card_instance.id)
+    )
+
+    # build the headers for the request then update the header
+    key_dict = {"Authorization": authorization}
+    request.headers = key_dict or request.headers.update(key_dict)
+
+    _logger.debug("Sending update command")
+    # execute the command
+    response = send_execute_commnad(request=request)
+
+    # return the dataclass
+    return response.model_dump()
+
+
+class CreditCardDueDateReferenceUpdate(BaseModel):
+    id: str
+    due_date_reference: int
+
+
+@async_logged(_logger)
+@router.post("/update_credit_card_due_date_reference")
+async def update_credit_card_due_date_reference(
+    modified_credit_card_instance: CreditCardDueDateReferenceUpdate,
+    authorization: str = Depends(apikey_scheme),
+):
+    """
+    Retrieve credit card instances that belong to the logged-in user
+    """
+    verify_auth_header(authorization=authorization)
+
+    _logger.debug("Instance to be modified: %s", modified_credit_card_instance)
+    # prepare the request
+    request = (
+        supabase()
+        .table("credit_card_instance")
+        .update(modified_credit_card_instance.model_dump())
+        .eq("id", modified_credit_card_instance.id)
+    )
+
+    # build the headers for the request then update the header
+    key_dict = {"Authorization": authorization}
+    request.headers = key_dict or request.headers.update(key_dict)
+
+    _logger.debug("Sending update command")
+    # execute the command
+    response = send_execute_commnad(request=request)
+
+    # return the dataclass
+    return response.model_dump()
