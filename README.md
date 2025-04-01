@@ -8,14 +8,14 @@ do you have enough money for this? (a personal finance application)
 
 ## Roadmap: Current
 ### Calculators
-- [v] Installment Schedule
+- [x] Installment Schedule
 - [ ] Add installment to Financial Commitment
  
 ### User Credit Cards Management
-- [v] Add a credit card
+- [x] Add a credit card
 - [ ] Manage credit cards
-    - [v] Modify credit card statement date
-    - [v] Modify credit card due date reference
+    - [x] Modify credit card statement date
+    - [x] Modify credit card due date reference
     - [ ] Delete credit card
 
 
