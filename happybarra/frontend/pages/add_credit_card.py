@@ -4,9 +4,11 @@ from types import SimpleNamespace
 
 import requests
 import streamlit as st
+import streamlit_antd_components as sac
 from dotenv import load_dotenv
 
 from happybarra.frontend.models.models import Bank, CreditCard, Network
+from happybarra.frontend.services import helpers
 
 _logger = logging.getLogger("happybarra.add_credit_card")
 PAGE_NAME = "add_credit_card"
@@ -37,7 +39,7 @@ if st.session_state.get(f"{PAGE_NAME}__invalid_combination_chosen", False):
 if st.session_state.get(f"{PAGE_NAME}__api_error_encountered", False):
     # show the banner
     st.error(
-        "There was an error encountered while adding credit card. Try again later "
+        "There was an error encountered while adding credit card. Try again later."
     )
     # reset the state so we don't show this again next page
     st.session_state[f"{PAGE_NAME}__api_error_encountered"] = False
@@ -80,9 +82,8 @@ if st.session_state[PAGE_NAME] == "credit_card":
 
     # use the retrieved ccs here:
     credit_card = st.selectbox("Select Credit Card", matching_ccs)
-
-    submit = st.button("Submit")
-    if submit:
+    btn = st.button(label="Submit")
+    if btn:
         st.session_state[f"{PAGE_NAME}__credit_card"] = credit_card
         st.session_state[PAGE_NAME] = "date_references"
         st.rerun()
@@ -114,50 +115,74 @@ if st.session_state[PAGE_NAME] == "credit_card_nickname":
 if st.session_state[PAGE_NAME] == "credit_card_instance_submitted":
     # Let's now call the back-end
 
-    # build the request body first
+    # build the url
+    api_url = f"{BACKEND_URL}/api/v1/credit_cards"
+    _logger.info("Submitting credit card info to %s", api_url)
+
+    # build the headers
+    access_token = st.session_state.get("login__access_token", None)
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # build the request body
     body = {
         "name": st.session_state[f"{PAGE_NAME}__nickname"],
-        "bank": st.session_state[f"{PAGE_NAME}__bank"],
-        "network": st.session_state[f"{PAGE_NAME}__network"],
         "credit_card": st.session_state[f"{PAGE_NAME}__credit_card"],
-        "statement_day": st.session_state[f"{PAGE_NAME}__statement_date"],
-        "due_date_reference": st.session_state[
-            f"{PAGE_NAME}__due_days_after_statement"
-        ],
+        "statement_day": str(st.session_state[f"{PAGE_NAME}__statement_date"]),
+        "due_date_reference": int(
+            st.session_state[f"{PAGE_NAME}__due_days_after_statement"]
+        ),
     }
-
-    # build the url
-    api_url = f"{BACKEND_URL}/api/v1/create_credit_card"
-    _logger.info("Submitting credit card info to %s", api_url)
     _logger.debug("%s", body)
 
     # do the request
     with st.spinner("Adding credit card...", show_time=True):
         try:
-            response = requests.post(api_url, json=body)
-            # testing the success
-            # response = SimpleNamespace(ok=True, content=None)
+            # If we're mocking, go here
+            if st.session_state[helpers.CONFIG_USE_MOCKS_HOOK]:
+                import time
+
+                time.sleep(2.0)
+                # testing the success
+                response = SimpleNamespace(ok=True, content=None)
+
+                # testing the fail
+                # response = SimpleNamespace(ok=False, content=None)
+
+            # otherwise, do the real api call
+            else:
+                response = requests.put(api_url, json=body, headers=headers)
+
+            if response.ok:
+                _logger.info("credit card added.")
+                st.session_state[PAGE_NAME] = "credit_card_successfully_added"
+                st.rerun()
+            else:
+                raise ValueError
+
         except requests.exceptions.ConnectionError as err:
             _logger.error("Connection error found: %s", err)
-            response = SimpleNamespace(ok=False, content=err)
 
-    if response.ok:
-        _logger.info("credit card added.")
-        st.session_state[PAGE_NAME] = "credit_card_successfully_added"
-        st.rerun()
+        except Exception as gen:
+            st.session_state[f"{PAGE_NAME}__api_error_encountered"] = True
+            st.session_state[f"{PAGE_NAME}"] = "bank_and_network"
+            _logger.info("Something went wrong on the API call: %s", api_url)
+            _logger.info("%s", response.content)
+            _logger.info("Then this lead to: %s", gen)
+            st.rerun()
 
-    else:
-        _logger.info("Something went wrong on the API call: %s", api_url)
-        _logger.info("%s", response.content)
-        st.session_state[f"{PAGE_NAME}__api_error_encountered"] = True
-        st.session_state[f"{PAGE_NAME}"] = "bank_and_network"
-        st.rerun()
 
 # Yey, show the success banner
 if st.session_state[PAGE_NAME] == "credit_card_successfully_added":
     st.success("Credit card added! 🎉")
-    st.write(f"Say welcome to {st.session_state[f'{PAGE_NAME}__nickname']}!")
+    st.write(
+        "👀 We're now watching you"
+        f", ___{st.session_state[f'{PAGE_NAME}__nickname']}___..."
+    )
     create_another = st.button("Create another")
     if create_another:
         st.session_state[PAGE_NAME] = "bank_and_network"
         st.rerun()
+
+# for dev purposes
+if st.session_state.get("happybarra_config__dev_mode", False):
+    st.write(st.session_state)

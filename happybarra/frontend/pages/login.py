@@ -6,6 +6,8 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 
+from happybarra.frontend.services import helpers
+
 # Create loggers first
 _logger = logging.getLogger("happybarra.login")
 _logger.debug("Loading environment variables")
@@ -35,57 +37,71 @@ logged_in = st.session_state.get("login__logged_in", False)
 
 _logger.debug("Asking for login-credentials")
 if not logged_in:
-    email = st.text_input("E-mail address:")
-    password = st.text_input("Password", type="password")
-    creds_submitted = st.button(label="Login")
+    with st.form("login"):
+        email = st.text_input("E-mail address:")
+        password = st.text_input("Password", type="password")
+        creds_submitted = st.form_submit_button(label="Login")
 
-    if creds_submitted:
-        _logger.debug("Attempting login request")
-        with st.spinner("Logging in...", show_time=True):
-            try:
-                # response = requests.post(
-                #     f"{BACKEND_URL}/api/v1/login",
-                #     json={"email": email, "password": password},
-                # )
-
-                # if dev-ing use this to bypass login request
-                # NOTE: this doesn't authenticate you with the database so inserts will
-                # mostly be an RLS violation
+if creds_submitted:
+    _logger.debug("Attempting login request")
+    with st.spinner("Logging in...", show_time=True):
+        try:
+            # if dev-ing use this branch to bypass login request
+            # NOTE: this doesn't authenticate you with the database so inserts will
+            # mostly be an RLS violation
+            if st.session_state[helpers.CONFIG_USE_MOCKS_HOOK]:
                 import time
 
-                time.sleep(2)
+                time.sleep(1.5)
                 response = SimpleNamespace(ok=True)
+                # response = SimpleNamespace(ok=False)
 
-                # if it's good
-                if response.ok:
-                    _logger.debug("Login successful.")
-                    st.session_state["login__logged_in"] = True
-                    st.rerun()
-
-                # if it's not
-                raise ValueError
-
-            except requests.exceptions.ConnectionError as err:
-                _logger.error(
-                    "Trouble connecting to the back-end server. "
-                    "Might be the back-end is not instantiated? %s",
-                    err,
+            # For the production case, you will use the back-end API itself
+            else:
+                response: requests.Response = requests.post(
+                    f"{BACKEND_URL}/api/v1/security/login",
+                    data={"username": email, "password": password},
                 )
+
+            # if it's good
+            if response.ok:
+                _logger.debug("Login successful.")
+                st.session_state["login__logged_in"] = True
+                st.session_state["login__access_token"] = response.json()[
+                    "access_token"
+                ]
+                st.session_state["login__token_type"] = response.json()["token_type"]
+                st.session_state["login__refresh_token"] = response.json()[
+                    "refresh_token"
+                ]
+
                 st.rerun()
 
-            except ValueError as err:
-                _logger.error("Trouble logging in. %s", err)
-                st.session_state["login__logged_in"] = False
-                st.session_state["login__failed_attempt"] = True
-                if "login__failed_attempt_counter" in st.session_state:
-                    st.session_state["login__failed_attempt_counter"] += 1
-                else:
-                    st.session_state["login__failed_attempt_counter"] = 1
-                _logger.error(
-                    "Invalid login attempt # %s",
-                    st.session_state["login__failed_attempt_counter"],
-                )
-                st.rerun()
+            # if it's not
+            raise ValueError
 
-# for debugging
-# st.write(st.session_state)
+        except requests.exceptions.ConnectionError as err:
+            _logger.error(
+                "Trouble connecting to the back-end server. "
+                "Might be the back-end is not instantiated? %s",
+                err,
+            )
+            st.rerun()
+
+        except ValueError as err:
+            _logger.error("Trouble logging in. %s", err)
+            st.session_state["login__logged_in"] = False
+            st.session_state["login__failed_attempt"] = True
+            if "login__failed_attempt_counter" in st.session_state:
+                st.session_state["login__failed_attempt_counter"] += 1
+            else:
+                st.session_state["login__failed_attempt_counter"] = 1
+            _logger.error(
+                "Invalid login attempt # %s\n",
+                st.session_state["login__failed_attempt_counter"],
+            )
+            st.rerun()
+
+# for dev purposes
+if st.session_state.get("happybarra_config__dev_mode", False):
+    st.write(st.session_state)

@@ -1,16 +1,42 @@
-# happybarra
-do i have enough money for this?
+# 🐹 happybarra
+do you have enough money for this? (a personal finance application)
 
-- [ ] Need to learn jinja for the templating. Immediate goal is create a web page that
-    lets you select a credit card, then asks for an input of installment, and then
-    generates the installment scheme for you.
-- [ ] Think we need to integrate database for the first point. This might be SQLite.
+## Architecture
+- Streamlit for front-end
+- FastAPI for back-end
+- Supabase for database
 
-## Features I need
-- [ ] Creating partial functions for other CC
+## Roadmap: Current
+### Calculators
+[v] Installment Schedule
+[ ] Add installment to Financial Commitment
+ 
+### User Credit Cards Management
+[v] Add a credit card
+[ ] Manage credit cards
+    [v] Modify credit card statement date
+    [v] Modify credit card due date reference
+    [ ] Delete credit card
 
-## The Perfectionist
-- [ ] Make registry "discoverable" by Pylance (or whatever autocomplete you're using)
 
-## Oh God, We're Now Typing
-- [ ] Turn on mypy 🤪
+## Roadmap: Up Next
+
+### Financial Commitment
+[ ] Credit Card Installments
+[ ] Loans
+
+### Financial Sources
+[ ] Salary
+
+### Savings
+[ ] Savings Strategy
+
+### Simulations
+[ ] Simulate a credit card installment purchase
+[ ] Simulate a credit card purchase
+[ ] Simulate increase in salary
+
+### Dashboard
+[ ] Financial Commitments
+
+

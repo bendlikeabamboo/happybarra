@@ -3751,6 +3751,20 @@ watchdog = {version = ">=2.1.5,<7", markers = "platform_system != \"Darwin\""}
 snowflake = ["snowflake-connector-python (>=3.3.0) ; python_version < \"3.12\"", "snowflake-snowpark-python[modin] (>=1.17.0) ; python_version < \"3.12\""]
 
 [[package]]
+name = "streamlit-antd-components"
+version = "0.3.2"
+description = "streamlit customer components of Antd Design and Mantine"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "streamlit_antd_components-0.3.2-py3-none-any.whl", hash = "sha256:5ae28496127202ed266ea167649436a15f3d548a4805ee5d992c6fc0fe103fd6"},
+]
+
+[package.dependencies]
+streamlit = ">=1.12.0"
+
+[[package]]
 name = "strenum"
 version = "0.4.15"
 description = "An Enum that inherits from str."
@@ -4453,4 +4467,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "e410ce7badffbfe0ef8d7825db3e7492a93e84df770daec0924ccc4b73c86853"
+content-hash = "e7cdc1837e2a5eac74fef66ae7ad3559119ee1e1f4cd55b756e9cb0b2c30ed7e"

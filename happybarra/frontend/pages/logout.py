@@ -37,12 +37,13 @@ logged_in = st.session_state.get("login__logged_in", True)
 if logged_in:
     log_out = st.button(label="Logout")
 
+    # TODO: Erase session info here
     if log_out:
         _logger.debug("Attempting logout request")
         with st.spinner("Logging out...", show_time=True):
             try:
                 # response = requests.post(
-                #     f"{BACKEND_URL}/api/v1/login",
+                #     f"{BACKEND_URL}/api/v1/logout",
                 #     json={"email": email, "password": password},
                 # )
 
@@ -84,5 +85,6 @@ if logged_in:
                 )
                 st.rerun()
 
-# for debugging
-# st.write(st.session_state)
+# for dev purposes
+if st.session_state.get("happybarra_config__dev_mode", False):
+    st.write(st.session_state)
