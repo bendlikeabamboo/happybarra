@@ -1,33 +1,36 @@
 import logging
-import os
 import time
+from types import SimpleNamespace
 
 import dotenv
 import pandas as pd
 import requests
 import streamlit as st
 
+from happybarra.frontend.services.helpers import (
+    BACKEND_URL,
+    CONFIG_USE_MOCKS_HOOK,
+    fetch_list_of_credit_cards,
+)
+
 dotenv.load_dotenv()
 
 _logger = logging.getLogger("happybarra.manage_credit_cards")
 
-
-BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
-
-
 if not BACKEND_URL:
     raise ValueError("No backend found.")
 
+API_V1_CREDIT_CARDS_DELETE = f"{BACKEND_URL}/api/v1/credit_cards"
 
-st.markdown("""## 📂💳 Manage Credit Cards""")
+
+st.markdown("""## 🛠️ Manage Credit Cards""")
 st.markdown("""Add, delete, or modify your existing credit cards""")
 
 
-@st.cache_data
-def fetch_list_of_credit_cards(*, headers):
-    _logger.debug("Fetching lists of credit cards")
-    response = requests.get(f"{BACKEND_URL}/api/v1/credit_cards", headers=headers)
-    return response
+def build_authorization_header() -> dict:
+    access_token = st.session_state.get("login__access_token", None)
+    header = {"Authorization": f"Bearer {access_token}"}
+    return header
 
 
 # Page keys
@@ -39,6 +42,7 @@ PK_CHANGE_STATEMENT_DATE = f"{PAGE_KEY}__changing_statement_date"
 PK_CHANGE_DUE_DATE_REFERENCE = f"{PAGE_KEY}__changing_due_date_reference"
 PK_CONFIRM_CHANGES = f"{PAGE_KEY}__confirming_deleting_card"
 PK_OPERATION_SUCCESS = f"{PAGE_KEY}__operation_success"
+PK_OPERATION_FAILED = f"{PAGE_KEY}__operation_failed"
 
 
 PK_DELETE_CREDIT_CARD = f"{PAGE_KEY}__deleting_card"
@@ -48,6 +52,7 @@ PK_CONFIRM_DELETE_CREDIT_CARD = f"{PAGE_KEY}__confirming_deleting_card"
 VK_CHOSEN_CREDIT_CARD = f"{PAGE_KEY}__chosen_credit_card"
 VK_CHOSEN_STATEMENT_DATE = f"{PAGE_KEY}__chosen_statement_date"
 VK_CHOSEN_DUE_DATE_REFERENCE = f"{PAGE_KEY}__chosen_due_date_reference"
+VK_ERROR = f"{PAGE_KEY}__error"
 
 
 if PAGE_KEY not in st.session_state:
@@ -59,8 +64,6 @@ if st.session_state.get(PAGE_KEY) == PK_LANDING:
 
     access_token = st.session_state.get("login__access_token", None)
     headers = {"Authorization": f"Bearer {access_token}"}
-
-    _logger.debug("Using authorization header: %s", headers)
 
     with st.spinner("Loading credit cards...", show_time=True):
         st.markdown("### Credit Cards List")
@@ -108,8 +111,6 @@ if st.session_state.get(PAGE_KEY) == PK_LANDING:
                     "Please annoy the developer into fixing this."
                 )
                 raise ValueError("Two credit card names exist for a user")
-
-            _logger.debug("Card to modify: %s", card_to_modify)
 
             # modify st.session_state
             st.session_state[PAGE_KEY] = PK_CHOOSE_OPERATION
@@ -209,8 +210,37 @@ if st.session_state.get(PAGE_KEY) == PK_CHANGE_DUE_DATE_REFERENCE:
                 time.sleep(5)
                 st.rerun()
 
+if st.session_state.get(PAGE_KEY) == PK_DELETE_CREDIT_CARD:
+    credit_card = st.session_state.get(VK_CHOSEN_CREDIT_CARD)
+    name = st.session_state[VK_CHOSEN_CREDIT_CARD][0]["credit_card_instance__name"]
+    st.markdown(f"You are deleting your credit card **{name or '[blank name]'}**")
+    st.markdown("Are you sure? 🥹")
+    sure = st.button(label="I am sure 😔", type="primary")
+    if sure:
+        # build authorization header
+
+        with st.spinner("Deleting card..."):
+            if st.session_state[CONFIG_USE_MOCKS_HOOK]:
+                response = SimpleNamespace(ok=True)
+                # response = SimpleNamespace(ok=False, content="Mocking Failure")
+            else:
+                data = {"name": name}
+                headers = build_authorization_header()
+                response = requests.delete(
+                    API_V1_CREDIT_CARDS_DELETE, headers=headers, json=data
+                )
+
+        if response.ok:
+            st.session_state[PAGE_KEY] = PK_OPERATION_SUCCESS
+            st.rerun()
+        else:
+            st.session_state[VK_ERROR] = response.content
+            st.session_state[PAGE_KEY] = PK_OPERATION_FAILED
+            st.rerun()
+
+
 if st.session_state.get(PAGE_KEY) == PK_OPERATION_SUCCESS:
-    st.success(body="Credit card updated 🎉")
+    st.success(body="Credit card operation success 🎉")
     go_back = st.button(label="Go back")
     if go_back:
         keys_to_delete = [key for key in st.session_state if key.startswith(PAGE_KEY)]
@@ -219,6 +249,20 @@ if st.session_state.get(PAGE_KEY) == PK_OPERATION_SUCCESS:
         st.session_state[PAGE_KEY] = PK_LANDING
         fetch_list_of_credit_cards.clear()
         st.rerun()
+
+if st.session_state.get(PAGE_KEY) == PK_OPERATION_FAILED:
+    st.error(
+        body=f"Credit card operation failed 🥹. Error: {st.session_state[VK_ERROR]}"
+    )
+    go_back = st.button(label="Go back")
+    if go_back:
+        keys_to_delete = [key for key in st.session_state if key.startswith(PAGE_KEY)]
+        for key in keys_to_delete:
+            del st.session_state[key]
+        st.session_state[PAGE_KEY] = PK_LANDING
+        fetch_list_of_credit_cards.clear()
+        st.rerun()
+
 
 # for dev purposes
 if st.session_state.get("happybarra_config__dev_mode", False):

@@ -4,7 +4,6 @@ from types import SimpleNamespace
 
 import requests
 import streamlit as st
-import streamlit_antd_components as sac
 from dotenv import load_dotenv
 
 from happybarra.frontend.models.models import Bank, CreditCard, Network
@@ -155,6 +154,7 @@ if st.session_state[PAGE_NAME] == "credit_card_instance_submitted":
             if response.ok:
                 _logger.info("credit card added.")
                 st.session_state[PAGE_NAME] = "credit_card_successfully_added"
+                helpers.fetch_list_of_credit_cards.clear()
                 st.rerun()
             else:
                 raise ValueError

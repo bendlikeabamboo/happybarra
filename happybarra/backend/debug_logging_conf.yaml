@@ -46,6 +46,10 @@ loggers:
         level: ERROR
         handlers: [console]
         propagate: no
+    watchfiles:
+        level: ERROR
+        handlers: [console]
+        propagate: no
 
 
 root:

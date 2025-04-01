@@ -2,14 +2,15 @@ import logging
 from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from gotrue import UserResponse
+from pydantic import BaseModel
 
 from happybarra.backend.dependencies import (
+    APIResponse,
     Client,
+    SyncSelectRequestBuilder,
     apikey_scheme,
     get_authed_supabase_client,
-    oauth2_scheme,
     send_execute_commnad,
     supabase,
     verify_auth_header,
@@ -26,10 +27,6 @@ router = APIRouter(prefix="/api/v1/credit_cards", tags=["Credit Cards"])
 class User(BaseModel):
     id: str
     email: str
-
-
-async def get_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    return User(id="eme")
 
 
 class CreditCardInstanceMapModel(BaseModel):
@@ -73,6 +70,19 @@ class CreditCardCreationForm(BaseModel):
     due_date_reference: int
 
 
+def validate_if_response_is_one(response: APIResponse, query: str) -> APIResponse:
+    if len(response.data) == 0:
+        raise HTTPException(
+            status_code=404,
+            detail={"msg": f"Resource not found: {query}"},
+        )
+    elif len(response.data) != 1:
+        raise HTTPException(
+            status_code=409,
+            detail={"msg": f"Data fetched is more than one: {query}"},
+        )
+
+
 @async_logged(_logger)
 @router.put("")
 async def add_credit_card(
@@ -85,7 +95,7 @@ async def add_credit_card(
     verify_auth_header(authorization=authorization)
 
     # first get the id of the credit card
-    response = (
+    response: APIResponse = (
         supabase()
         .table("credit_card")
         .select("*")
@@ -94,26 +104,13 @@ async def add_credit_card(
     )
 
     # validate the fetched credit card
-    response_data: list = response.model_dump()["data"]
-    if len(response_data) == 0:
-        raise HTTPException(
-            status_code=404,
-            detail={"msg": f"Credit card not found: {credit_card_to_add.credit_card}"},
-        )
-    elif len(response_data) != 1:
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "msg": f"There are mutiple credit cards associated with the "
-                f"selected credit card: {credit_card_to_add.credit_card}. "
-                "Contact Developer"
-            },
-        )
+    validate_if_response_is_one(response, query=credit_card_to_add.credit_card)
 
-    fetched_credit_card_id = response_data[0]["id"]
+    # if validation passed, get the id
+    fetched_credit_card_id = response.data[0]["id"]
 
     # then get the user
-    jwt_key = authorization[len("Bearer "):]
+    jwt_key = authorization[len("Bearer ") :]
     _logger.debug("Authorization being used: %s", jwt_key)
     response: UserResponse = supabase().auth.get_user(jwt_key)
     user_id = response.user.id
@@ -138,7 +135,7 @@ async def add_credit_card(
 
 @async_logged(_logger)
 @router.get("")
-async def yoink_credit_cards(authorization: str = Depends(apikey_scheme)):
+async def get_credit_cards(authorization: str = Depends(apikey_scheme)):
     """
     Retrieve credit card instances that belong to the logged-in user
     """
@@ -229,3 +226,66 @@ async def update_credit_card_due_date_reference(
 
     # return the dataclass
     return response.model_dump()
+
+
+class CreditCardName(BaseModel):
+    name: str
+
+
+def setup_supabase_request_headers(
+    request: SyncSelectRequestBuilder, authorization: dict
+) -> SyncSelectRequestBuilder:
+    """
+    Add authorization to the headers of the supabase request.
+    """
+    key_dict = {"Authorization": authorization}
+    request.headers = key_dict or request.headers.update(key_dict)
+    return request
+
+
+@async_logged(_logger)
+@router.delete("")
+async def delete_credit_card(
+    credit_card_name: CreditCardName, authorization: str = Depends(apikey_scheme)
+):
+    _logger.debug("\n---\nBegin credit card deletion sequence...")
+    _logger.debug(
+        "Getting credit card id associated to the provided credit card name: %s",
+        credit_card_name,
+    )
+
+    db_request = (
+        supabase()
+        .table("credit_card_instance")
+        .select("id, name")
+        .eq("name", credit_card_name.name)
+    )
+
+    db_request = setup_supabase_request_headers(db_request, authorization)
+
+    # execute
+    response: APIResponse = db_request.execute()
+    del db_request
+
+    # validate
+    validate_if_response_is_one(response=response, query=credit_card_name.name)
+
+    _logger.debug(
+        "Sending delete request: %s",
+        credit_card_name,
+    )
+
+    # send delete request
+    id_to_delete = response.data[0]["id"]
+    db_request = (
+        supabase().table("credit_card_instance").delete().eq("id", id_to_delete)
+    )
+    db_request = setup_supabase_request_headers(db_request, authorization)
+    _logger.debug(
+        "Sending delete request: %s",
+        credit_card_name,
+    )
+    response: APIResponse = db_request.execute()
+    _logger.debug("Deletion sequence finished.\n---\n")
+
+    return response

@@ -1,7 +1,8 @@
-from fastapi import FastAPI
-import os
-import yaml
 import logging
+import os
+
+import yaml
+from fastapi import FastAPI
 
 from .routers import banks, credit_cards, security
 
@@ -13,6 +14,7 @@ tags_metadata = [
     {"name": "Security", "description": "PM is the 🔒"},
     {"name": "Credit Cards", "description": "well, stuff we want (or not) to track"},
 ]
+
 
 def setup_logging():
     # Let's setup the logging
@@ -31,6 +33,7 @@ def setup_logging():
     _logger = logging.getLogger("happybarra")
     _logger.info("🐹 initialized")
     # Logger setup done.
+
 
 setup_logging()
 
