@@ -8,35 +8,35 @@ do you have enough money for this? (a personal finance application)
 
 ## Roadmap: Current
 ### Calculators
-[v] Installment Schedule
-[ ] Add installment to Financial Commitment
+- [x] Installment Schedule
+- [ ] Add installment to Financial Commitment
  
 ### User Credit Cards Management
-[v] Add a credit card
-[ ] Manage credit cards
-    [v] Modify credit card statement date
-    [v] Modify credit card due date reference
-    [ ] Delete credit card
+- [x] Add a credit card
+- [ ] Manage credit cards
+    - [x] Modify credit card statement date
+    - [x] Modify credit card due date reference
+    - [ ] Delete credit card
 
 
 ## Roadmap: Up Next
 
 ### Financial Commitment
-[ ] Credit Card Installments
-[ ] Loans
+- [ ] Credit Card Installments
+- [ ] Loans
 
 ### Financial Sources
-[ ] Salary
+- [ ] Salary
 
 ### Savings
-[ ] Savings Strategy
+- [ ] Savings Strategy
 
 ### Simulations
-[ ] Simulate a credit card installment purchase
-[ ] Simulate a credit card purchase
-[ ] Simulate increase in salary
+- [ ] Simulate a credit card installment purchase
+- [ ] Simulate a credit card purchase
+- [ ] Simulate increase in salary
 
 ### Dashboard
-[ ] Financial Commitments
+- [ ] Financial Commitments
 
 
