@@ -3,12 +3,12 @@ import logging
 import pandas as pd
 import streamlit as st
 
-from happybarra.frontend.models.enums import InstallmentAmountType
-from happybarra.frontend.models.models import (
+from happybarra.frontend.models import (
     Bank,
     CreditCard,
     CreditCardInstallment,
     CreditCardInstance,
+    InstallmentAmountType,
     Network,
 )
 
@@ -62,7 +62,7 @@ if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
     if bank_and_network_submitted:
         st.session_state[VK_BANK] = bank
         st.session_state[VK_NETWORK] = network
-        st.session_state[PAGE_KEY] = "credit_card_selection"
+        st.session_state[PAGE_KEY] = PK_CREDIT_CARD_SELECTION
         st.rerun()
 
 # Credit card selection sub page
@@ -151,7 +151,7 @@ if st.session_state[PAGE_KEY] == PK_INSTALLMENT_SCHEDULE:
     _logger.debug("Showing installment plan.")
     installment: CreditCardInstallment = st.session_state[VK_INSTALLMENT_INSTANCE]
     df = pd.DataFrame(installment.get_charge_dates())
-    st.write(df)
+    st.dataframe(df, hide_index=True)
     done = st.button("Done")
     if done:
         # cleanup

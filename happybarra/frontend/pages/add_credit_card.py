@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 
-from happybarra.frontend.models.models import Bank, CreditCard, Network
+from happybarra.frontend.models import Bank, CreditCard, Network
 from happybarra.frontend.services import helpers
 
 _logger = logging.getLogger("happybarra.add_credit_card")
