@@ -2,7 +2,6 @@ import logging
 import time
 from types import SimpleNamespace
 
-import dotenv
 import pandas as pd
 import requests
 import streamlit as st
@@ -12,8 +11,6 @@ from happybarra.frontend.services.helpers import (
     CONFIG_USE_MOCKS_HOOK,
     fetch_list_of_credit_cards,
 )
-
-dotenv.load_dotenv()
 
 _logger = logging.getLogger("happybarra.manage_credit_cards")
 

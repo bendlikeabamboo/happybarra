@@ -95,9 +95,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         pages_to_show = {"Login": [login]}
         pg = st.navigation(pages_to_show)
         pg.run()
-
-        # for dev purposes
-        if st.session_state.get("happybarra_config__dev_mode", False):
+        if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
 
     # if successfully logged in, they will see different set of pages.
@@ -130,6 +128,10 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         }
         pg = st.navigation(pages_to_show)
         pg.run()
+
+        # for dev purposes
+        if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
+            st.write(st.session_state)
 
 
 if __name__ == "__main__":
