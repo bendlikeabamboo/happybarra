@@ -1,0 +1,29 @@
+# Use the official Python image as a base
+FROM python:3.13.2-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the rest of the project files into the container
+COPY . /app/
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+# Install Poetry
+RUN pip install --no-cache-dir poetry
+
+# Install dependencies
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-interaction --no-ansi
+
+
+# Expose the ports for Streamlit (8000)
+EXPOSE 8000
+
+# Entry point for the container
+CMD ["sh", "-c", "fastapi dev happybarra/backend/main.py --port 8000 --host 0.0.0.0"]

@@ -21,7 +21,7 @@ API_V1_CREDIT_CARDS_DELETE = f"{BACKEND_URL}/api/v1/credit_cards"
 
 
 st.markdown("""## 🛠️ Manage Credit Cards""")
-st.markdown("""Add, delete, or modify your existing credit cards""")
+st.markdown("""Modify or delete one your existing credit cards""")
 
 
 def build_authorization_header() -> dict:
@@ -259,8 +259,3 @@ if st.session_state.get(PAGE_KEY) == PK_OPERATION_FAILED:
         st.session_state[PAGE_KEY] = PK_LANDING
         fetch_list_of_credit_cards.clear()
         st.rerun()
-
-
-# for dev purposes
-if st.session_state.get("happybarra_config__dev_mode", False):
-    st.write(st.session_state)
