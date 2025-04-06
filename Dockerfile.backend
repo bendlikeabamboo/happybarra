@@ -8,8 +8,8 @@ ENV PYTHONUNBUFFERED 1
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the rest of the project files into the container
-COPY . /app/
+# Copy contents of the project
+COPY pyproject.toml poetry.lock ./ /app/
 
 # Install curl
 RUN apt-get update && apt-get install -y curl

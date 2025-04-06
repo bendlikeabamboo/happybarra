@@ -32,9 +32,9 @@ BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 #
 # main part
-st.write("👤 happybarra login")
+st.write("### 🐹 happybarra")
 
-# W
+# 
 # ERROR HANDLING
 # If a failed attempt was done whatever the error is, show the error banner
 if st.session_state.get(VK_FAILED_ATTEMPT, False):
@@ -52,7 +52,7 @@ if not logged_in:
     with st.form("login"):
         email = st.text_input("E-mail address:")
         password = st.text_input("Password", type="password")
-        creds_submitted = st.form_submit_button(label="Login")
+        creds_submitted = st.form_submit_button(label="Log in")
 
 if creds_submitted:
     _logger.debug("Attempting login request")

@@ -1,25 +1,40 @@
-from happybarra.frontend.data.banks import (
+from happybarra.frontend.data.networks import (
+    AMERICAN_EXPRESS,
+    DINERS_CLUB_INTERNATIONAL,
+    JCB,
+    MASTERCARD,
+    UNIONPAY,
+    VISA,
+)
+from happybarra.frontend.models.models import CreditCard as CC
+
+from .banks import (
+    AUB,
+    BDO,
     BPI,
+    CHINABANK,
     EASTWEST,
+    HSBC,
+    LANDBANK,
     METROBANK,
+    PNB,
+    RCBC,
     SECURITY_BANK,
     UNIONBANK,
 )
-from happybarra.frontend.data.networks import JCB, MASTERCARD, VISA
-from happybarra.frontend.models.models import CreditCard as CC
 
 # BPI Credit Cards
 # https://www.bpi.com.ph/personal/cards/credit-cards
-CC(bank=BPI, network=VISA, name="BPI Signature Card")
-CC(bank=BPI, network=VISA, name="BPI Amore Platinum Cashback Card")
-CC(bank=BPI, network=VISA, name="BPI Amore Cashback Card")
-CC(bank=BPI, network=MASTERCARD, name="BPI Platinum Rewards Card")
+CC(bank=BPI, network=MASTERCARD, name="BPI DOS Card")
+CC(bank=BPI, network=MASTERCARD, name="BPI Edge Card")
 CC(bank=BPI, network=MASTERCARD, name="BPI Gold Rewards Card")
+CC(bank=BPI, network=MASTERCARD, name="BPI Platinum Rewards Card")
 CC(bank=BPI, network=MASTERCARD, name="BPI Rewards Card")
 CC(bank=BPI, network=MASTERCARD, name="Petron BPI Card")
-CC(bank=BPI, network=MASTERCARD, name="BPI Edge Card")
-CC(bank=BPI, network=MASTERCARD, name="BPI DOS Card")
 CC(bank=BPI, network=MASTERCARD, name="Robinsons Cashback Card")
+CC(bank=BPI, network=VISA, name="BPI Amore Cashback Card")
+CC(bank=BPI, network=VISA, name="BPI Amore Platinum Cashback Card")
+CC(bank=BPI, network=VISA, name="BPI Signature Card")
 
 # Unionbank Credit Cards
 # https://www.unionbankph.com/cards/credit-card
@@ -125,10 +140,111 @@ CC(bank=EASTWEST, network=JCB, name="EastWest JCB Gold")
 # CC(bank=EASTWEST, network=MASTERCARD, name="")
 # CC(bank=EASTWEST, network=JCB, name="")
 
-# TODO: RCBC
-# TODO: HSBC
-# TODO: AUB
-# TODO: Landbank LOL
-# TODO: PNB
-# TODO: Chinabnk
-# TODO: BDO
+# RCBC
+# https://rcbccredit.com/credit-cards
+CC(bank=RCBC, network=VISA, name="RCBC Visa Infinite Card")
+CC(bank=RCBC, network=VISA, name="RCBC Visa Infinite Card")
+CC(bank=RCBC, network=VISA, name="RCBC Visa Platinum")
+CC(bank=RCBC, network=VISA, name="RCBC Flex Gold Visa")
+CC(bank=RCBC, network=VISA, name="RCBC Flex Visa")
+CC(bank=RCBC, network=VISA, name="RCBC AirAsia Credit Card")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC World Mastercard")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Black Card Platinum Mastercard")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Diamond Platinum Mastercard")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Hexagon Priority")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Hexagon Club")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Gold Mastercard")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC YGC Rewards Plus Program")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Classic Mastercard")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC ZALORA Credit Card")
+CC(bank=RCBC, network=MASTERCARD, name="RCBC Landmark Anson's Mastercard")
+CC(bank=RCBC, network=JCB, name="RCBC JCB Platinum")
+CC(bank=RCBC, network=JCB, name="RCBC Gold JCB")
+CC(bank=RCBC, network=JCB, name="RCBC Classic JCB")
+CC(bank=RCBC, network=UNIONPAY, name="RCBC UnionPay Diamond Card")
+
+# HSBC
+# https://www.hsbc.com.ph/credit-cards/products/
+CC(bank=HSBC, network=VISA, name="HSBC Live+ Credit Card")
+CC(bank=HSBC, network=VISA, name="HSBC Gold Visa Cash Back Credit Card")
+CC(bank=HSBC, network=VISA, name="HSBC Platinum Visa Rebate Credit Card")
+CC(bank=HSBC, network=MASTERCARD, name="HSBC Red Mastercard")
+CC(bank=HSBC, network=MASTERCARD, name="HSBC Premier Mastercard")
+
+# AUB
+# https://online.aub.ph/creditcards
+CC(bank=AUB, network=MASTERCARD, name="AUB Easy MasterCard")
+CC(bank=AUB, network=MASTERCARD, name="AUB Classic MasterCard")
+CC(bank=AUB, network=MASTERCARD, name="AUB Gold Mastercard")
+CC(bank=AUB, network=MASTERCARD, name="AUB Platinum Mastercard")
+
+# Landbank
+# https://www.landbank.com/cards/landbank-credit-card
+CC(bank=LANDBANK, network=MASTERCARD, name="Landbank Gold Mastercard")
+CC(bank=LANDBANK, network=MASTERCARD, name="Landbank Classic Mastercard")
+
+# PNB
+# https://www.pnb.com.ph/index.php/credit-cards?tpl=revamp
+CC(bank=PNB, network=VISA, name="PNB Visa Classic")
+CC(bank=PNB, network=VISA, name="PNB Visa Gold")
+CC(bank=PNB, network=MASTERCARD, name="PNB-PAL Mabuhay Miles World Elite Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB-PAL Mabuhay Miles World Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB-PAL Mabuhay Miles Platinum Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB-PAL Mabuhay Miles NOW Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB Essentials Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB Platinum Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB Ze-Lo Mastercard")
+CC(bank=PNB, network=MASTERCARD, name="PNB Cart Mastercard")
+CC(
+    bank=PNB,
+    network=MASTERCARD,
+    name="PNB-La Salle Green Hills Alumni Association Platinum Mastercard",
+)
+CC(bank=PNB, network=UNIONPAY, name="PNB Diamond UnionPay")
+
+# Chinabank
+# https://www.chinabank.ph/credit-cards
+CC(bank=CHINABANK, network=VISA, name="Chinabank Velvet Visa Signature")
+CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank Destinations World Mastercard")
+CC(
+    bank=CHINABANK,
+    network=MASTERCARD,
+    name="Chinabank Destinations World Dollar Mastercard",
+)
+CC(
+    bank=CHINABANK,
+    network=MASTERCARD,
+    name="Chinabank Destinations Platinum Mastercard",
+)
+CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank World Mastercard")
+CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank Cash Rewards Mastercard")
+CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank Platinum Mastercard")
+CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank Freedom Mastercard")
+CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank Prime Mastercard")
+
+# BDO
+# https://www.bdo.com.ph/personal/cards/credit-cards
+CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Purple")
+CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Yellow Green")
+CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Orange")
+CC(bank=BDO, network=MASTERCARD, name="BDO Standard Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO Bench Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO Installment Card")
+CC(bank=BDO, network=MASTERCARD, name="BDO Gold Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO Platinum Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO World Elite Mastercard")
+CC(bank=BDO, network=VISA, name="BDO Visa Classic")
+CC(bank=BDO, network=VISA, name="BDO Visa Gold")
+CC(bank=BDO, network=VISA, name="BDO Visa Platinum")
+CC(bank=BDO, network=VISA, name="BDO Visa Signature")
+CC(bank=BDO, network=UNIONPAY, name="BDO Gold UnionPay")
+CC(bank=BDO, network=UNIONPAY, name="BDO Diamond UnionPay")
+CC(bank=BDO, network=JCB, name="BDO JCB Lucky Cat")
+CC(bank=BDO, network=JCB, name="BDO JCB Gold")
+CC(bank=BDO, network=JCB, name="BDO JCB Platinum")
+CC(bank=BDO, network=DINERS_CLUB_INTERNATIONAL, name="BDO Diners Club International")
+CC(bank=BDO, network=DINERS_CLUB_INTERNATIONAL, name="BDO Diners Club Premiere")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="Blue from American Express")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Cashback Credit Card")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Explorer Credit Card")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Platinum Credit Card")

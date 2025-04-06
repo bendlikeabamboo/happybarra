@@ -17,7 +17,6 @@ BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 #
 # main part
-#
 st.write("## Logout")
 st.write("Are you sure? 🥹")
 
