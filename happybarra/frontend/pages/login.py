@@ -34,7 +34,7 @@ BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 # main part
 st.write("### 🐹 happybarra")
 
-# 
+#
 # ERROR HANDLING
 # If a failed attempt was done whatever the error is, show the error banner
 if st.session_state.get(VK_FAILED_ATTEMPT, False):
