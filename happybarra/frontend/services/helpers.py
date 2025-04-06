@@ -4,6 +4,7 @@ import os
 from functools import wraps
 from typing import TypeVar
 
+import dotenv
 import requests
 import streamlit as st
 from dateutil.relativedelta import relativedelta
@@ -12,12 +13,14 @@ from happybarra.frontend.models.enums import CalendarDirection, WeekEndPolicy
 
 _logger = logging.getLogger(__name__)
 
-
 T = TypeVar("T")
 
-CONFIG_USE_MOCKS_HOOK = "happybarra_config__use_mocks"
-CONFIG_BYPASS_LOGIN_HOOK = "happybarra_config__bypass_login"
+CONFIG_KEY = "happybarra_config"
+CONFIG_USE_MOCKS_HOOK = f"{CONFIG_KEY}__use_mocks"
+CONFIG_BYPASS_LOGIN_HOOK = f"{CONFIG_KEY}__bypass_login"
+CONFIG_DEV_MODE_HOOK = f"{CONFIG_KEY}__dev_mode"
 
+dotenv.load_dotenv()
 BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 

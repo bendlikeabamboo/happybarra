@@ -17,7 +17,6 @@ BACKEND_URL = os.getenv("LOCAL_BACKEND_URL")
 
 #
 # main part
-#
 st.write("## Logout")
 st.write("Are you sure? 🥹")
 
@@ -58,7 +57,8 @@ if logged_in:
                 # if it's good
                 if response.ok:
                     _logger.debug("Logout successful.")
-                    st.session_state["login__logged_in"] = False
+                    for key in st.session_state:
+                        del st.session_state[key]
                     st.rerun()
 
                 # if it's not
@@ -84,7 +84,3 @@ if logged_in:
                     st.session_state["login__failed_attempt_counter"],
                 )
                 st.rerun()
-
-# for dev purposes
-if st.session_state.get("happybarra_config__dev_mode", False):
-    st.write(st.session_state)

@@ -2,7 +2,6 @@ import logging
 import time
 from types import SimpleNamespace
 
-import dotenv
 import pandas as pd
 import requests
 import streamlit as st
@@ -13,18 +12,33 @@ from happybarra.frontend.services.helpers import (
     fetch_list_of_credit_cards,
 )
 
-dotenv.load_dotenv()
-
 _logger = logging.getLogger("happybarra.manage_credit_cards")
 
 if not BACKEND_URL:
     raise ValueError("No backend found.")
 
+# API endpoints
 API_V1_CREDIT_CARDS_DELETE = f"{BACKEND_URL}/api/v1/credit_cards"
 
+# Page keys
+PAGE_KEY = "manage_credit_cards"
+PK_LANDING = f"{PAGE_KEY}__landing"
+PK_CHOOSE_OPERATION = f"{PAGE_KEY}__choosing_operation"
 
-st.markdown("""## 🛠️ Manage Credit Cards""")
-st.markdown("""Add, delete, or modify your existing credit cards""")
+PK_OPERATION_FAILED = f"{PAGE_KEY}__operation_failed"
+PK_OPERATION_SUCCESS = f"{PAGE_KEY}__operation_success"
+PK_CONFIRM_CHANGES = f"{PAGE_KEY}__confirming_deleting_card"
+PK_CHANGE_STATEMENT_DATE = f"{PAGE_KEY}__changing_statement_date"
+PK_CHANGE_DUE_DATE_REFERENCE = f"{PAGE_KEY}__changing_due_date_reference"
+
+PK_DELETE_CREDIT_CARD = f"{PAGE_KEY}__deleting_card"
+PK_CONFIRM_DELETE_CREDIT_CARD = f"{PAGE_KEY}__confirming_deleting_card"
+
+# Variable keys
+VK_ERROR = f"{PAGE_KEY}__error"
+VK_CHOSEN_CREDIT_CARD = f"{PAGE_KEY}__chosen_credit_card"
+VK_CHOSEN_STATEMENT_DATE = f"{PAGE_KEY}__chosen_statement_date"
+VK_CHOSEN_DUE_DATE_REFERENCE = f"{PAGE_KEY}__chosen_due_date_reference"
 
 
 def build_authorization_header() -> dict:
@@ -33,26 +47,8 @@ def build_authorization_header() -> dict:
     return header
 
 
-# Page keys
-PAGE_KEY = "manage_credit_cards"
-PK_LANDING = f"{PAGE_KEY}__landing"
-PK_CHOOSE_OPERATION = f"{PAGE_KEY}__choosing_operation"
-
-PK_CHANGE_STATEMENT_DATE = f"{PAGE_KEY}__changing_statement_date"
-PK_CHANGE_DUE_DATE_REFERENCE = f"{PAGE_KEY}__changing_due_date_reference"
-PK_CONFIRM_CHANGES = f"{PAGE_KEY}__confirming_deleting_card"
-PK_OPERATION_SUCCESS = f"{PAGE_KEY}__operation_success"
-PK_OPERATION_FAILED = f"{PAGE_KEY}__operation_failed"
-
-
-PK_DELETE_CREDIT_CARD = f"{PAGE_KEY}__deleting_card"
-PK_CONFIRM_DELETE_CREDIT_CARD = f"{PAGE_KEY}__confirming_deleting_card"
-
-# Variable keys
-VK_CHOSEN_CREDIT_CARD = f"{PAGE_KEY}__chosen_credit_card"
-VK_CHOSEN_STATEMENT_DATE = f"{PAGE_KEY}__chosen_statement_date"
-VK_CHOSEN_DUE_DATE_REFERENCE = f"{PAGE_KEY}__chosen_due_date_reference"
-VK_ERROR = f"{PAGE_KEY}__error"
+st.markdown("""## 🛠️ Manage Credit Cards""")
+st.markdown("""Modify or delete one your existing credit cards""")
 
 
 if PAGE_KEY not in st.session_state:
@@ -262,8 +258,3 @@ if st.session_state.get(PAGE_KEY) == PK_OPERATION_FAILED:
         st.session_state[PAGE_KEY] = PK_LANDING
         fetch_list_of_credit_cards.clear()
         st.rerun()
-
-
-# for dev purposes
-if st.session_state.get("happybarra_config__dev_mode", False):
-    st.write(st.session_state)
