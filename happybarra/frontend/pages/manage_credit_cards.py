@@ -10,6 +10,7 @@ from happybarra.frontend.services.helpers import (
     BACKEND_URL,
     CONFIG_USE_MOCKS_HOOK,
     fetch_list_of_credit_cards,
+    build_authorization_header
 )
 
 _logger = logging.getLogger("happybarra.manage_credit_cards")
@@ -39,12 +40,6 @@ VK_ERROR = f"{PAGE_KEY}__error"
 VK_CHOSEN_CREDIT_CARD = f"{PAGE_KEY}__chosen_credit_card"
 VK_CHOSEN_STATEMENT_DATE = f"{PAGE_KEY}__chosen_statement_date"
 VK_CHOSEN_DUE_DATE_REFERENCE = f"{PAGE_KEY}__chosen_due_date_reference"
-
-
-def build_authorization_header() -> dict:
-    access_token = st.session_state.get("login__access_token", None)
-    header = {"Authorization": f"Bearer {access_token}"}
-    return header
 
 
 st.markdown("""## 🛠️ Manage Credit Cards""")

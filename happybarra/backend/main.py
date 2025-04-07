@@ -4,7 +4,7 @@ import os
 import yaml
 from fastapi import FastAPI
 
-from .routers import banks, credit_cards, security
+from .routers import banks, credit_cards, dues, security
 
 tags_metadata = [
     {
@@ -41,6 +41,7 @@ app = FastAPI(openapi_tags=tags_metadata)
 app.include_router(banks.router)
 app.include_router(security.router)
 app.include_router(credit_cards.router)
+app.include_router(dues.router)
 
 
 @app.get("/")

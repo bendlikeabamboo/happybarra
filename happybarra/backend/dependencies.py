@@ -61,7 +61,7 @@ async def rcv_acc_token(token: str):
     return {"Authorization": f"Bearer {token}"}
 
 
-def send_execute_commnad(request: SyncSelectRequestBuilder) -> APIResponse:
+def send_execute_command(request: SyncSelectRequestBuilder) -> APIResponse:
     """
     Yet another redirection so that we handle all errors in this one function.
     """

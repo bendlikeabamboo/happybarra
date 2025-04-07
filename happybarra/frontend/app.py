@@ -97,6 +97,11 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         pg.run()
         if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
+            reset_state = st.button(label="Reset Session State")
+            if reset_state:
+                for key in st.session_state:
+                    del st.session_state[key]
+                st.rerun()
 
     # if successfully logged in, they will see different set of pages.
     if st.session_state.get("login__logged_in", False):
@@ -132,6 +137,13 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         # for dev purposes
         if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
+            reset_state = st.button(label="Reset Session State")
+            if reset_state:
+                for key in [
+                    state for state in st.session_state if "login" not in state
+                ]:
+                    del st.session_state[key]
+                st.rerun()
 
 
 if __name__ == "__main__":

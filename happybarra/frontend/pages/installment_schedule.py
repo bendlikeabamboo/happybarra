@@ -11,6 +11,10 @@ from happybarra.frontend.models import (
     InstallmentAmountType,
     Network,
 )
+from happybarra.frontend.services.helpers import (
+    build_authorization_header,
+    fetch_list_of_credit_cards,
+)
 
 PAGE_KEY = "credit_card_installment"
 PK_KEY_DATE_SELECTION = f"{PAGE_KEY}__key_date_selection"
@@ -34,6 +38,8 @@ VK_INSTALLMENT_INSTANCE = f"{PAGE_KEY}__installment_instance"
 VK_INSTALLMENT_DATE_START = f"{PAGE_KEY}__installment_date_start"
 VK_INVALID_COMBINATION_CHOSEN = f"{PAGE_KEY}__invalid_combination_chosen"
 
+BT_USE_EXISTING_CREDIT_CARD = f"{PAGE_KEY}__USE_EXISTING_CREDIT_CARD"
+
 
 _logger = logging.getLogger(f"happybarra.{PAGE_KEY}")
 
@@ -55,15 +61,77 @@ if st.session_state.get(VK_INVALID_COMBINATION_CHOSEN, False):
 # Bank and network subpage
 if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
     _logger.debug("Asking for bank and network")
+    st.info(
+        "We don't collect any important credit card  details, "
+        "only statement day and due date.",
+        icon="📝",
+    )
+
+    st.markdown("---")
+    st.markdown("Enter your credit card info:")
     bank = st.selectbox("Bank", [bank for bank in Bank.registry])
     network = st.selectbox("Network", [network for network in Network.registry])
     bank_and_network_submitted = st.button("Submit")
+
+    _logger.debug("Also offering user a list of his credit cards")
+    headers = build_authorization_header()
+    credit_cards = pd.DataFrame(
+        fetch_list_of_credit_cards(headers=headers).json()["data"]
+    )
+    names = (
+        credit_cards["credit_card_instance__name"]
+        + " — "
+        + credit_cards["credit_card__name"]
+    ).to_list()
+    if len(names) != 0:
+        st.markdown("---")
+        st.markdown("Or use one of your tracked credit cards")
+        user_credit_card_selection = st.selectbox("", options=names)
+        use_credit_card_submitted = st.button(
+            key=BT_USE_EXISTING_CREDIT_CARD, label="Submit"
+        )
 
     if bank_and_network_submitted:
         st.session_state[VK_BANK] = bank
         st.session_state[VK_NETWORK] = network
         st.session_state[PAGE_KEY] = PK_CREDIT_CARD_SELECTION
         st.rerun()
+
+    if use_credit_card_submitted:
+        selected_cc = user_credit_card_selection.split(" — ")[0]
+        matched_cc = credit_cards[
+            credit_cards["credit_card_instance__name"] == selected_cc
+        ]
+
+        # data validation
+        if len(matched_cc) != 1:
+            raise ValueError(
+                "We're only suppose to have one credit card with this name."
+            )
+
+        matched_cc = matched_cc.to_dict(orient="records")[0]
+
+        st.session_state[VK_BANK] = matched_cc["bank__name"]
+        st.session_state[VK_NETWORK] = matched_cc["network__name"]
+        st.session_state[VK_STATEMENT_DATE] = matched_cc[
+            "credit_card_instance__statement_day"
+        ]
+        st.session_state[VK_DUE_DATE_REF] = matched_cc[
+            "credit_card_instance__due_date_reference"
+        ]
+        st.session_state[VK_CREDIT_CARD_KEY] = matched_cc["credit_card__name"]
+        st.session_state[VK_CREDIT_CARD_OBJECT] = CreditCard.registry[
+            matched_cc["credit_card__name"]
+        ]
+        st.session_state[VK_CREDIT_CARD_INSTANCE] = CreditCardInstance(
+            credit_card=st.session_state[VK_CREDIT_CARD_OBJECT],
+            statement_day=st.session_state[VK_STATEMENT_DATE],
+            due_date_ref=st.session_state[VK_DUE_DATE_REF],
+        )
+        st.session_state[PAGE_KEY] = PK_DEFINE_INSTALLMENT
+        st.rerun()
+
+        # st.session_state[VK_BANK] =
 
 # Credit card selection sub page
 if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SELECTION:

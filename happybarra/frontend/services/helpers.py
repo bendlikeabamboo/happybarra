@@ -123,3 +123,8 @@ def fetch_list_of_credit_cards(*, headers):
     _logger.debug("Fetching lists of credit cards")
     response = requests.get(f"{BACKEND_URL}/api/v1/credit_cards", headers=headers)
     return response
+
+def build_authorization_header() -> dict:
+    access_token = st.session_state.get("login__access_token", None)
+    header = {"Authorization": f"Bearer {access_token}"}
+    return header
