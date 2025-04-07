@@ -3,15 +3,12 @@ import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from uuid import UUID
-from decimal import Decimal
-
 from happybarra.backend.dependencies import (
-    apikey_scheme,
     Depends,
-    verify_auth_header,
-    supabase,
+    apikey_scheme,
     send_execute_command,
+    supabase,
+    verify_auth_header,
 )
 
 #

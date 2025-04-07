@@ -9,8 +9,8 @@ import streamlit as st
 from happybarra.frontend.services.helpers import (
     BACKEND_URL,
     CONFIG_USE_MOCKS_HOOK,
+    build_authorization_header,
     fetch_list_of_credit_cards,
-    build_authorization_header
 )
 
 _logger = logging.getLogger("happybarra.manage_credit_cards")
