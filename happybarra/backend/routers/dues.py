@@ -1,7 +1,8 @@
 import logging
+from types import NoneType
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, AfterValidator, field_serializer
 
 from happybarra.backend.dependencies import (
     Depends,
@@ -9,7 +10,14 @@ from happybarra.backend.dependencies import (
     send_execute_command,
     supabase,
     verify_auth_header,
+    get_user_id,
+    add_authorization_header,
 )
+
+import datetime as dt
+from typing import List, Annotated
+
+from uuid import UUID
 
 #
 # Create logger
@@ -37,46 +45,166 @@ class CreditCardInstallmentPutRequest(BaseModel):
     user_id: str
 
 
+def is_float(input: str) -> float:
+    try:
+        return float(input)
+    except ValueError as err:
+        raise err
+
+
+def is_uuid(input: UUID) -> str:
+    try:
+        return str(input)
+    except ValueError as err:
+        raise err
+
+
 @router.get("/")
 async def health() -> HealthResponse:
     return HealthResponse(msg="Dues is healthy 🥹")
 
 
-@router.put("/credit_card_installment/")
+class CreditCardInstallment(BaseModel):
+    id: UUID
+    created_at: dt.datetime
+    name: str
+    credit_card_instance_id: UUID
+    user_id: UUID
+    amount_type: str
+    amount: Annotated[float, AfterValidator(is_float)]
+
+
+class CreditCardInstallmentsGetResponse(BaseModel):
+    data: List[CreditCardInstallment]
+    count: NoneType | int
+
+
+@router.post("/credit_card_installment")
 async def add_credit_card_installment(
     credit_card_installment_form: CreditCardInstallmentForm,
     authorization=Depends(apikey_scheme),
 ):
-    # Task #1: Data validate header
-    verify_auth_header(authorization)
+    verify_auth_header(authorization=authorization)
 
-    # Task #2: Get user_id
-    token = authorization[len("Bearer ") :]
-
-    try:
-        user_id = supabase().auth.get_user(jwt=token).model_dump()["user"]["id"]
-    except KeyError as err:
-        HTTPException(
-            status_code=403,
-            detail=f"Failed to authenticate user with the provided identity. {err}",
+    # check if installment name is being used/have been used before
+    existing_installments = await get_credit_card_installment(
+        authorization=authorization
+    )
+    existing_names = [datum["name"] for datum in existing_installments.data]
+    if credit_card_installment_form.name in existing_names:
+        raise HTTPException(
+            status_code=409,
+            detail="Installment name already exists. Choose a different one.",
         )
 
-    put_request = CreditCardInstallmentPutRequest(
+    user_id = get_user_id(authorization=authorization)
+
+    post_request = CreditCardInstallmentPutRequest(
         name=credit_card_installment_form.name,
         credit_card_instance_id=credit_card_installment_form.credit_card_instance_id,
         amount_type=credit_card_installment_form.amount_type,
         amount=credit_card_installment_form.amount,
         user_id=user_id,
     )
-    _logger.debug("`put_request` %s", put_request.model_dump())
     request = (
         supabase()
         .table("credit_card_installment")
-        .insert(put_request.model_dump(), returning="representation")
+        .insert(post_request.model_dump(), returning="representation")
     )
-    # build the headers for the request then update the header
-    key_dict = {"Authorization": authorization}
-    request.headers = key_dict or request.headers.update(key_dict)
+    request = add_authorization_header(authorization=authorization, request=request)
+    send_execute_command(request)
 
-    response = send_execute_command(request)
+    # check if installment is indeed created
+    existing_installments = await get_credit_card_installment(
+        authorization=authorization
+    )
+    existing_names = {datum["name"]: datum for datum in existing_installments.data}
+    if credit_card_installment_form.name not in existing_names:
+        raise HTTPException(
+            status_code=422,
+            detail="Insert request successful but double-checking failed",
+        )
+    return CreditCardInstallment(**existing_names[credit_card_installment_form.name])
+
+
+@router.get("/credit_card_installments/")
+async def get_credit_card_installment(
+    authorization=Depends(apikey_scheme),
+) -> CreditCardInstallmentsGetResponse:
+    request = supabase().table("credit_card_installment").select("*")
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
+    return response
+
+
+class CreditCardInstallmentScheduleForm(BaseModel):
+    credit_card_installment_id: UUID
+    bill_date: dt.date
+    statement_date: dt.date
+    due_date: dt.date
+    amount: float
+
+    @field_serializer("credit_card_installment_id")
+    def serialize_uuid(self, credit_card_installment_id: UUID) -> str:
+        return str(credit_card_installment_id)
+
+    @field_serializer("bill_date", "statement_date", "due_date")
+    def serialize_date(self, date: dt.date) -> str:
+        return date.strftime("%Y-%m-%d")
+
+
+@router.post("/credit_card_installment_schedule")
+async def create_credit_card_installment_schedule(
+    form: CreditCardInstallmentScheduleForm | List[CreditCardInstallmentScheduleForm],
+    authorization=Depends(apikey_scheme),
+):
+    verify_auth_header(authorization=authorization)
+    user_id = get_user_id(authorization=authorization)
+
+    if not isinstance(form, list):
+        request_body = form.model_dump()
+        request_body["user_id"] = user_id
+    else:
+        request_body: List[dict] = []
+        for row in form:
+            row = row.model_dump()
+            row["user_id"] = user_id
+            request_body.append(row)
+
+    request = supabase().table("credit_card_installment_schedule").insert(request_body)
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
+    return response
+
+
+@router.get("/credit_card_installment/{name}")
+async def get_credit_card_installment_by_name(
+    name: str,
+    authorization=Depends(apikey_scheme),
+) -> CreditCardInstallmentsGetResponse:
+    verify_auth_header(authorization=authorization)
+    request = supabase().table("credit_card_installment").select("*").eq("name", name)
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
+    return response
+
+
+@router.get("/credit_card_installment_schedule/{name}")
+async def get_credit_card_installment_schedule_by_name(
+    name: str,
+    authorization=Depends(apikey_scheme),
+):
+    verify_auth_header(authorization=authorization)
+    installment_by_name_response = await get_credit_card_installment_by_name(
+        name=name, authorization=authorization
+    )
+    installment_id = installment_by_name_response.data[0]["id"]
+    request = (
+        supabase()
+        .table("credit_card_installment_schedule")
+        .select("*")
+        .eq("credit_card_installment_id", installment_id)
+    )
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
     return response
