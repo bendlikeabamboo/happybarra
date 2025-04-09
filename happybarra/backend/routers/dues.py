@@ -1,23 +1,21 @@
+import datetime as dt
 import logging
 from types import NoneType
+from typing import Annotated, List
+from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, AfterValidator, field_serializer
+from pydantic import AfterValidator, BaseModel, field_serializer
 
 from happybarra.backend.dependencies import (
     Depends,
+    add_authorization_header,
     apikey_scheme,
+    get_user_id,
     send_execute_command,
     supabase,
     verify_auth_header,
-    get_user_id,
-    add_authorization_header,
 )
-
-import datetime as dt
-from typing import List, Annotated
-
-from uuid import UUID
 
 #
 # Create logger
