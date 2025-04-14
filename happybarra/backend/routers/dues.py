@@ -57,7 +57,7 @@ def is_uuid(input: UUID) -> str:
         raise err
 
 
-@router.get("/")
+@router.get("/health")
 async def health() -> HealthResponse:
     return HealthResponse(msg="Dues is healthy 🥹")
 
@@ -202,6 +202,21 @@ async def get_credit_card_installment_schedule_by_name(
         .table("credit_card_installment_schedule")
         .select("*")
         .eq("credit_card_installment_id", installment_id)
+    )
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
+    return response
+
+
+@router.get("/")
+async def get_dues(
+    authorization=Depends(apikey_scheme),
+):
+    verify_auth_header(authorization=authorization)
+    request = (
+        supabase()
+        .table("financial_commitment_schedule")
+        .select("*")
     )
     request = add_authorization_header(authorization=authorization, request=request)
     response = send_execute_command(request=request)

@@ -9,7 +9,10 @@ from dotenv import load_dotenv
 from happybarra.frontend.models import Bank, CreditCard, Network
 from happybarra.frontend.services import helpers
 
+st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
+
 _logger = logging.getLogger("happybarra.add_credit_card")
+
 
 # Page Keys
 PAGE_KEY = "add_credit_card"

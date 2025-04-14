@@ -1,4 +1,5 @@
 import logging
+from types import SimpleNamespace
 
 import pandas as pd
 import streamlit as st
@@ -14,7 +15,14 @@ from happybarra.frontend.models import (
 from happybarra.frontend.services.helpers import (
     build_authorization_header,
     fetch_list_of_credit_cards,
+    create_new_installment,
+    CONFIG_USE_MOCKS_HOOK,
+    get_installment_by_name,
+    bulk_create_new_installment_schedules,
+    get_dues_schedules,
 )
+
+st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
 
 PAGE_KEY = "credit_card_installment"
 PK_KEY_DATE_SELECTION = f"{PAGE_KEY}__key_date_selection"
@@ -22,6 +30,7 @@ PK_DEFINE_INSTALLMENT = f"{PAGE_KEY}__define_installment"
 PK_INSTALLMENT_SCHEDULE = f"{PAGE_KEY}__installment_schedule"
 PK_CREDIT_CARD_SELECTION = f"{PAGE_KEY}__credit_card_selection"
 PK_BANK_AND_NETWORK_SELECTION = f"{PAGE_KEY}__bank_and_network_selection"
+PK_ADD_TO_DUES = f"{PAGE_KEY}__ADD_TO_DUES"
 
 
 VK_BANK = f"{PAGE_KEY}__bank"
@@ -37,8 +46,20 @@ VK_CREDIT_CARD_INSTANCE = f"{PAGE_KEY}__credit_card_instance"
 VK_INSTALLMENT_INSTANCE = f"{PAGE_KEY}__installment_instance"
 VK_INSTALLMENT_DATE_START = f"{PAGE_KEY}__installment_date_start"
 VK_INVALID_COMBINATION_CHOSEN = f"{PAGE_KEY}__invalid_combination_chosen"
+VK_EXISTING_CREDIT_CARD_USED = f"{PAGE_KEY}__EXISTING_CREDIT_CARD_USED"
+VK_INSTALLMENT_DF = f"{PAGE_KEY}__INSTALLMENT_DF"
+VK_INSTALLMENT_NAME = f"{PAGE_KEY}__INSTALLMENT_NAME"
+VK_CREATED_INSTALLMENT_ID = f"{PAGE_KEY}__VK_CREATED_INSTALLMENT_ID"
+VK_ERROR_ON_INSTALLMENT_CREATION = f"{PAGE_KEY}__VK_ERROR_ON_INSTALLMENT_CREATION"
+VK_SUCCESSFULLY_ADDED_TO_DUES = f"{PAGE_KEY}__VK_SUCCESSFULLY_ADDED_TO_DUES"
+
 
 BT_USE_EXISTING_CREDIT_CARD = f"{PAGE_KEY}__USE_EXISTING_CREDIT_CARD"
+
+INSTALLMENT_TYPE_CHOICES = {
+    "Fixed Monthly": InstallmentAmountType.MONTHLY_FIXED,
+    "Fixed Total": InstallmentAmountType.TOTAL_FIXED,
+}
 
 
 _logger = logging.getLogger(f"happybarra.{PAGE_KEY}")
@@ -57,6 +78,17 @@ if st.session_state.get(VK_INVALID_COMBINATION_CHOSEN, False):
     # Let's now reset the state so by next st.rerun(), we don't show the error banner
     # again.
     st.session_state[VK_INVALID_COMBINATION_CHOSEN] = False
+
+if st.session_state.get(VK_ERROR_ON_INSTALLMENT_CREATION, False):
+    st.error("Something went wrong while adding your installment. Please try again.")
+    st.session_state[VK_ERROR_ON_INSTALLMENT_CREATION] = False
+
+if st.session_state.get(VK_SUCCESSFULLY_ADDED_TO_DUES, False):
+    st.success(
+        "🎉 Installment successfully added. Go to __💸 Dues Tracker__ "
+        "to view your dues."
+    )
+    st.session_state[VK_SUCCESSFULLY_ADDED_TO_DUES] = False
 
 # Bank and network subpage
 if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
@@ -129,6 +161,7 @@ if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
             due_date_ref=st.session_state[VK_DUE_DATE_REF],
         )
         st.session_state[PAGE_KEY] = PK_DEFINE_INSTALLMENT
+        st.session_state[VK_EXISTING_CREDIT_CARD_USED] = matched_cc
         st.rerun()
 
         # st.session_state[VK_BANK] =
@@ -182,12 +215,8 @@ if st.session_state[PAGE_KEY] == PK_KEY_DATE_SELECTION:
 if st.session_state[PAGE_KEY] == PK_DEFINE_INSTALLMENT:
     _logger.debug("asking for installment")
 
-    installment_type_choices = {
-        "Fixed Monthly": InstallmentAmountType.MONTHLY_FIXED,
-        "Fixed Total": InstallmentAmountType.TOTAL_FIXED,
-    }
     installment_type = st.radio(
-        "What installment amount do you know?", installment_type_choices
+        "What installment amount do you know?", INSTALLMENT_TYPE_CHOICES
     )
 
     # TODO: Check if thousand separator is now supported by sprintf.js 🥲
@@ -208,7 +237,7 @@ if st.session_state[PAGE_KEY] == PK_DEFINE_INSTALLMENT:
         st.session_state[VK_INSTALLMENT_INSTANCE] = CreditCardInstallment(
             st.session_state[VK_CREDIT_CARD_INSTANCE],
             tenure=installment_tenure,
-            amount_type=installment_type_choices[installment_type],
+            amount_type=INSTALLMENT_TYPE_CHOICES[installment_type],
             amount=installment_amount,
             start_date=date_input,
         )
@@ -220,10 +249,92 @@ if st.session_state[PAGE_KEY] == PK_INSTALLMENT_SCHEDULE:
     installment: CreditCardInstallment = st.session_state[VK_INSTALLMENT_INSTANCE]
     df = pd.DataFrame(installment.get_charge_dates())
     st.dataframe(df, hide_index=True)
-    done = st.button("Done")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        done = st.button("Done", type="secondary")
+    with col3:
+        if st.session_state.get(VK_EXISTING_CREDIT_CARD_USED, False):
+            add_to_dues = st.button("Add to dues", type="primary")
+
     if done:
         # cleanup
         for key in st.session_state:
             if PAGE_KEY in key:
                 del st.session_state[key]
+        st.rerun()
+    if add_to_dues:
+        st.session_state[PAGE_KEY] = PK_ADD_TO_DUES
+        st.session_state[VK_INSTALLMENT_DF] = df
+        st.rerun()
+
+
+if st.session_state[PAGE_KEY] == PK_ADD_TO_DUES:
+    df: pd.DataFrame = st.session_state.get(VK_INSTALLMENT_DF)
+    st.write(df)
+
+    installment_name = st.text_input(
+        label="Name your installment:", key=VK_INSTALLMENT_NAME, max_chars=100
+    )
+    submit_installment_name = st.button(label="Submit")
+
+    credit_card_instance_id = st.session_state[VK_EXISTING_CREDIT_CARD_USED][
+        "credit_card_instance__id"
+    ]
+
+    if submit_installment_name:
+        # {
+        #     "name": "string",
+        #     "credit_card_instance_id": "string",
+        #     "amount_type": "string",
+        #     "amount": 0,
+        # }
+
+        data = {
+            "name": installment_name,
+            "credit_card_instance_id": credit_card_instance_id,
+            "amount_type": INSTALLMENT_TYPE_CHOICES[
+                st.session_state[VK_INSTALLMENT_TYPE]
+            ],
+            "amount": st.session_state[VK_INSTALLMENT_AMOUNT],
+        }
+        headers = build_authorization_header()
+        if not st.session_state[CONFIG_USE_MOCKS_HOOK]:
+            st.write(data)
+            st.write(headers)
+            response = create_new_installment(data=data, headers=headers)
+        else:
+            response = SimpleNamespace(ok=True)
+            # response = SimpleNamespace(ok=False)
+        if not response.ok:
+            st.session_state[VK_ERROR_ON_INSTALLMENT_CREATION] = True
+            st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK_SELECTION
+            st.rerun()
+
+        # Get the newly created installment's ID
+        response = get_installment_by_name(name=installment_name, headers=headers)
+        if not response.ok:
+            st.session_state[VK_ERROR_ON_INSTALLMENT_CREATION] = True
+            st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK_SELECTION
+            st.rerun()
+        new_installment_id = response.json()["data"][0]["id"]
+
+        # Using the obtained ID, begin upload sequence for the installment schedule
+        df = df.rename({"bill_post_date": "bill_date"}, axis=1)
+        df["credit_card_installment_id"] = new_installment_id
+        df = df.drop("credit_card_name", axis=1)
+        date_cols = ["due_date", "bill_date", "statement_date"]
+        for date_col in date_cols:
+            df[date_col] = pd.to_datetime(df[date_col]).dt.strftime("%Y-%m-%d")
+        body = df.to_dict(orient="records")
+        headers = build_authorization_header()
+        response = bulk_create_new_installment_schedules(data=body, headers=headers)
+
+        if not response.ok:
+            st.session_state[VK_ERROR_ON_INSTALLMENT_CREATION] = True
+            st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK_SELECTION
+            st.rerun()
+
+        get_dues_schedules.clear()
+        st.session_state[VK_SUCCESSFULLY_ADDED_TO_DUES] = True
+        st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK_SELECTION
         st.rerun()

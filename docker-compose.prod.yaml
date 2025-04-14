@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod.backend
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - happybarra-network
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod.frontend
+    volumes:
+      - ./:/app
+    depends_on:
+      - backend
+    ports:
+      - "8501:8501"
+    networks:
+      - happybarra-network
+
+networks:
+  happybarra-network:
+    driver: bridge

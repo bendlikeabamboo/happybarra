@@ -2,12 +2,13 @@ import datetime as dt
 import logging
 import os
 from functools import wraps
-from typing import TypeVar
+from typing import List, TypeVar
 
 import dotenv
 import requests
 import streamlit as st
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
 from happybarra.frontend.models.enums import CalendarDirection, WeekEndPolicy
 
@@ -125,7 +126,47 @@ def fetch_list_of_credit_cards(*, headers):
     return response
 
 
+def create_new_installment(
+    *, data: dict | List[dict], headers: dict
+) -> requests.Response:
+    _logger.debug("Creating new installment instance...")
+    response = requests.post(
+        f"{BACKEND_URL}/api/v1/dues/credit_card_installment", headers=headers, json=data
+    )
+    return response
+
+
+def bulk_create_new_installment_schedules(
+    *, data: dict | List[dict], headers: dict
+) -> requests.Response:
+    _logger.debug("Creating new installment schedules...")
+    response = requests.post(
+        f"{BACKEND_URL}/api/v1/dues/credit_card_installment_schedule",
+        headers=headers,
+        json=data,
+    )
+    return response
+
+
+def get_installment_by_name(name: str, headers: dict) -> dict:
+    _logger.debug("Fetching credit card installment by name")
+    response = requests.get(
+        f"{BACKEND_URL}/api/v1/dues/credit_card_installment/{name}", headers=headers
+    )
+    return response
+
+
 def build_authorization_header() -> dict:
     access_token = st.session_state.get("login__access_token", None)
     header = {"Authorization": f"Bearer {access_token}"}
     return header
+
+API_GET_INSTALLMENT_SCHEDULES = (
+    f"{BACKEND_URL}/api/v1/dues/"
+)
+
+@st.cache_data
+def get_dues_schedules():
+    headers = build_authorization_header()
+    response = requests.get(API_GET_INSTALLMENT_SCHEDULES, headers=headers)
+    return pd.DataFrame(response.json()["data"])

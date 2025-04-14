@@ -12,6 +12,11 @@ import yaml
 from happybarra.frontend.data import banks, credit_cards, networks  # noqa: F401
 from happybarra.frontend.services import helpers
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 
 @click.command()
 @click.option(
@@ -73,8 +78,6 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
     st.session_state[helpers.CONFIG_USE_MOCKS_HOOK] = use_mocks
     st.session_state[helpers.CONFIG_BYPASS_LOGIN_HOOK] = bypass_login
 
-    # Setup streamlit page config
-    st.set_page_config(page_title="happybarra", page_icon="🐹")
 
     #
     # PAGE CONTROL
@@ -88,6 +91,9 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
 
     # if it's not, then show login
     if not st.session_state.get("login__logged_in", False):
+        # Setup streamlit page config
+        st.set_page_config(page_title="happybarra", page_icon="🐹")
+
         #
         ## Define the pages
         login = st.Page("pages/login.py", title="Access 🐹 happybarra")
@@ -118,6 +124,9 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
             "pages/manage_credit_cards.py", title="🛠️ Manage Credit Cards"
         )
         logout = st.Page("pages/logout.py", title="⬅️ Logout")
+        dues_tracker = st.Page("pages/dues_tracker.py", title="💸 Dues Tracker")
+        manage_dues = st.Page("pages/manage_dues.py", title="⚓ Manage Dues")
+
         pages_to_show = {
             "": [home],
             "Calculators": [
@@ -127,6 +136,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
                 credit_card,
                 manage_credit_cards,
             ],
+            "Dues": [dues_tracker, manage_dues],
             "Account": [
                 logout,
             ],
