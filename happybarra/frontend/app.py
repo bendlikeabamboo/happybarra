@@ -6,16 +6,14 @@ import os
 import click
 import streamlit as st
 import yaml
+from dotenv import load_dotenv
 
 # This import will register all data inside these modules so we can access
 # their respective registries later in the script.
 from happybarra.frontend.data import banks, credit_cards, networks  # noqa: F401
 from happybarra.frontend.services import helpers
 
-from dotenv import load_dotenv
-
 load_dotenv()
-
 
 
 @click.command()
@@ -78,7 +76,6 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
     st.session_state[helpers.CONFIG_USE_MOCKS_HOOK] = use_mocks
     st.session_state[helpers.CONFIG_BYPASS_LOGIN_HOOK] = bypass_login
 
-
     #
     # PAGE CONTROL
     # At first only show login. After successfully logging in, you can now access the
@@ -96,7 +93,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
 
         #
         ## Define the pages
-        login = st.Page("pages/login.py", title="Access 🐹 happybarra")
+        login = st.Page("page/login.py", title="Access 🐹 happybarra")
 
         pages_to_show = {"Login": [login]}
         pg = st.navigation(pages_to_show)
@@ -113,19 +110,19 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
     if st.session_state.get("login__logged_in", False):
         #
         ## Define the pages
-        home = st.Page("pages/home.py", title="🏠 Home")
+        home = st.Page("page/home.py", title="🏠 Home")
         installment = st.Page(
-            "pages/installment_schedule.py", title="🗓️ Installment Schedule"
+            "page/installment_schedule.py", title="🗓️ Installment Schedule"
         )
         credit_card = st.Page(
-            "pages/add_credit_card.py", title="💳 Add Credit Card Tracker"
+            "page/add_credit_card.py", title="💳 Add Credit Card Tracker"
         )
         manage_credit_cards = st.Page(
-            "pages/manage_credit_cards.py", title="🛠️ Manage Credit Cards"
+            "page/manage_credit_cards.py", title="🛠️ Manage Credit Cards"
         )
-        logout = st.Page("pages/logout.py", title="⬅️ Logout")
-        dues_tracker = st.Page("pages/dues_tracker.py", title="💸 Dues Tracker")
-        manage_dues = st.Page("pages/manage_dues.py", title="⚓ Manage Dues")
+        logout = st.Page("page/logout.py", title="⬅️ Logout")
+        dues_tracker = st.Page("page/dues_tracker.py", title="💸 Dues Tracker")
+        manage_dues = st.Page("page/manage_dues.py", title="⚓ Manage Dues")
 
         pages_to_show = {
             "": [home],

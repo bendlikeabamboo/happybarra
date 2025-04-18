@@ -13,7 +13,6 @@ from happybarra.frontend.services.helpers import (
     fetch_list_of_credit_cards,
 )
 
-
 st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
 _logger = logging.getLogger("happybarra.manage_credit_cards")
 

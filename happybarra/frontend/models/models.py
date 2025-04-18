@@ -2,9 +2,10 @@ import datetime as dt
 import logging
 from dataclasses import dataclass, field
 from decimal import Decimal
+from functools import partial
 from typing import List
-from dateutil import relativedelta
 
+from dateutil import relativedelta
 from pydantic import BaseModel
 
 from happybarra.frontend.models.enums import (
@@ -19,7 +20,6 @@ from happybarra.frontend.services.helpers import (
     this_day_next_month,
     weekend_check,
 )
-from functools import partial
 
 _logger = logging.getLogger(__name__)
 
@@ -62,7 +62,6 @@ class CreditCardInstance:
             raise NotImplementedError("Due date type not yet implemented")
 
     def statement_date(self, post_date: dt.date):
-
         # Let's first weekend_check the statement day on the posting month
         weekend_checked_statement_day = weekend_check(
             safe_date(post_date.year, post_date.month, self.statement_day),

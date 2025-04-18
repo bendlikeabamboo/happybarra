@@ -13,13 +13,13 @@ from happybarra.frontend.models import (
     Network,
 )
 from happybarra.frontend.services.helpers import (
-    build_authorization_header,
-    fetch_list_of_credit_cards,
-    create_new_installment,
     CONFIG_USE_MOCKS_HOOK,
-    get_installment_by_name,
+    build_authorization_header,
     bulk_create_new_installment_schedules,
+    create_new_installment,
+    fetch_list_of_credit_cards,
     get_dues_schedules,
+    get_installment_by_name,
 )
 
 st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
@@ -67,6 +67,13 @@ _logger = logging.getLogger(f"happybarra.{PAGE_KEY}")
 st.markdown("# 🗓️ Installment Schedule")
 st.markdown("Get a list of your installment due dates 😉.")
 
+st.info(
+    "We don't collect any important credit card  details, "
+    "only statement day and due date.",
+    icon="📝",
+)
+st.markdown("---")
+
 # Initialize the app
 if PAGE_KEY not in st.session_state:
     st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK_SELECTION
@@ -93,13 +100,6 @@ if st.session_state.get(VK_SUCCESSFULLY_ADDED_TO_DUES, False):
 # Bank and network subpage
 if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
     _logger.debug("Asking for bank and network")
-    st.info(
-        "We don't collect any important credit card  details, "
-        "only statement day and due date.",
-        icon="📝",
-    )
-
-    st.markdown("---")
     st.markdown("Enter your credit card info:")
     bank = st.selectbox("Bank", [bank for bank in Bank.registry])
     network = st.selectbox("Network", [network for network in Network.registry])

@@ -213,11 +213,32 @@ async def get_dues(
     authorization=Depends(apikey_scheme),
 ):
     verify_auth_header(authorization=authorization)
+    request = supabase().table("financial_commitment_schedule").select("*")
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
+    return response
+
+
+@router.delete("/{due_id}")
+async def delete_due(
+    due_id: UUID,
+    authorization=Depends(apikey_scheme),
+):
+    verify_auth_header(authorization=authorization)
     request = (
         supabase()
-        .table("financial_commitment_schedule")
-        .select("*")
+        .table("financial_commitment")
+        .select("id, source_type")
+        .eq("id", due_id)
     )
     request = add_authorization_header(authorization=authorization, request=request)
     response = send_execute_command(request=request)
+
+    data_results: List[dict] = response.model_dump().get("data", {})
+    source_type = data_results[0].get("source_type")
+
+    request = supabase().table(source_type).delete().eq("id", due_id)
+    request = add_authorization_header(authorization=authorization, request=request)
+    response = send_execute_command(request=request)
+
     return response

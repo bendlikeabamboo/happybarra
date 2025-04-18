@@ -5,10 +5,10 @@ from functools import wraps
 from typing import List, TypeVar
 
 import dotenv
+import pandas as pd
 import requests
 import streamlit as st
 from dateutil.relativedelta import relativedelta
-import pandas as pd
 
 from happybarra.frontend.models.enums import CalendarDirection, WeekEndPolicy
 
@@ -161,12 +161,26 @@ def build_authorization_header() -> dict:
     header = {"Authorization": f"Bearer {access_token}"}
     return header
 
-API_GET_INSTALLMENT_SCHEDULES = (
-    f"{BACKEND_URL}/api/v1/dues/"
-)
+
+API_GET_INSTALLMENT_SCHEDULES = f"{BACKEND_URL}/api/v1/dues/"
+
 
 @st.cache_data
 def get_dues_schedules():
     headers = build_authorization_header()
     response = requests.get(API_GET_INSTALLMENT_SCHEDULES, headers=headers)
     return pd.DataFrame(response.json()["data"])
+
+
+API_DELETE_DUE = f"{BACKEND_URL}/api/v1/dues/"
+
+
+def delete_due(id: str) -> requests.Response:
+    headers = build_authorization_header()
+    response = requests.delete(API_DELETE_DUE + id, headers=headers)
+    return response
+
+
+def reset_session_state_for_page(page_key: str):
+    for key in [key for key in st.session_state if key.startswith(page_key)]:
+        del st.session_state[key]
