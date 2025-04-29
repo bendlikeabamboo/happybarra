@@ -7,7 +7,13 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from happybarra.frontend.models import Bank, CreditCard, Network
-from happybarra.frontend.services import helpers
+from happybarra.frontend.services import (
+    CONFIG_USE_MOCKS_HOOK,
+    fetch_list_of_credit_cards,
+    submit_button, submit_and_go_back_buttons, go_back_button
+)
+
+st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
 
 _logger = logging.getLogger("happybarra.add_credit_card")
 
@@ -68,7 +74,7 @@ if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK:
     _logger.debug("Selecting bank and network")
     bank = st.selectbox("Select bank", Bank.registry)
     network = st.selectbox("Select network", Network.registry)
-    submit = st.button("Submit")
+    submit = submit_button()
     if submit:
         st.session_state[VK_BANK] = bank
         st.session_state[VK_NETWORK] = network
@@ -101,10 +107,13 @@ if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SELECTION:
 
     # use the retrieved ccs here:
     credit_card = st.selectbox("Select Credit Card", matching_ccs)
-    btn = st.button(label="Submit")
-    if btn:
+    submit, go_back = submit_and_go_back_buttons()
+    if submit:
         st.session_state[VK_CREDIT_CARD] = credit_card
         st.session_state[PAGE_KEY] = PK_DATE_REFERENCES_SELECTION
+        st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK
         st.rerun()
 
 # date references selection
@@ -113,20 +122,27 @@ if st.session_state[PAGE_KEY] == PK_DATE_REFERENCES_SELECTION:
     due_days_after_statement = st.select_slider(
         "How many days after your statement is your due date?", range(1, 45)
     )
-    submit = st.button("Submit")
+    submit, go_back = submit_and_go_back_buttons()
     if submit:
         st.session_state[VK_STATEMENT_DAY] = statement_date
         st.session_state[VK_DUE_DATE_REFERENCE] = due_days_after_statement
         st.session_state[PAGE_KEY] = PK_CREDIT_CARD_NAME_ENTRY
         st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_CREDIT_CARD_SELECTION
+        st.rerun()
 
 # choose credit card nickname
 if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_NAME_ENTRY:
     nickname = st.text_input("Give your credit card a nick name:", max_chars=30)
-    submit = st.button("Create Credit Card")
+    submit, go_back = submit_and_go_back_buttons()
+
     if submit:
         st.session_state[VK_CREDIT_CARD_NAME] = nickname
         st.session_state[PAGE_KEY] = PK_CREDIT_CARD_SUBMISSION
+        st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_DATE_REFERENCES_SELECTION
         st.rerun()
 
 if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SUBMISSION:
@@ -153,7 +169,7 @@ if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SUBMISSION:
     with st.spinner("Adding credit card...", show_time=True):
         try:
             # If we're mocking, go here
-            if st.session_state[helpers.CONFIG_USE_MOCKS_HOOK]:
+            if st.session_state[CONFIG_USE_MOCKS_HOOK]:
                 import time
 
                 time.sleep(2.0)
@@ -170,7 +186,7 @@ if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SUBMISSION:
             if response.ok:
                 _logger.info("credit card added.")
                 st.session_state[PAGE_KEY] = PK_CREDIT_CARD_SUBMISSION_SUCCESS
-                helpers.fetch_list_of_credit_cards.clear()
+                fetch_list_of_credit_cards.clear()
                 st.rerun()
             else:
                 raise ValueError
@@ -193,8 +209,8 @@ if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SUBMISSION_SUCCESS:
     st.write(
         f"👀 We're now watching you, ___{st.session_state[VK_CREDIT_CARD_NAME]}___..."
     )
-    create_another = st.button("Create another")
-    if create_another:
+    go_back = go_back_button()
+    if go_back:
         for key in st.session_state:
             if PAGE_KEY in key:
                 del st.session_state[key]

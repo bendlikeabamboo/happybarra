@@ -6,6 +6,8 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 
+st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
+
 # Create loggers first
 _logger = logging.getLogger("happybarra.logout")
 _logger.debug("Loading environment variables")

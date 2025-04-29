@@ -2,8 +2,10 @@ import datetime as dt
 import logging
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import List
+from functools import partial, wraps
+from typing import List, TypeVar
 
+from dateutil import relativedelta
 from pydantic import BaseModel
 
 from happybarra.frontend.models.enums import (
@@ -12,8 +14,7 @@ from happybarra.frontend.models.enums import (
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.frontend.services.helpers import (
-    instance_registry,
+from happybarra.frontend.services import (
     safe_date,
     this_day_next_month,
     weekend_check,
@@ -21,6 +22,27 @@ from happybarra.frontend.services.helpers import (
 
 _logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
+def instance_registry(cls: T) -> T:
+    "Attach a registry to a class"
+
+    # save the original init method to a variable
+    original_init = cls.__init__
+
+    # declare an empty registry
+    cls.registry = dict()
+
+    # new init method that registers the instance, yey
+    @wraps(original_init)
+    def new_init(self, **kwargs):
+        original_init(self, **kwargs)
+        cls.registry[self.name] = self
+
+    # replace init with new init method
+    cls.__init__ = new_init
+    cls.__annotations__["registry"] = dict
+    return cls
 
 @instance_registry
 class Bank(BaseModel):
@@ -43,7 +65,7 @@ class CreditCard:
     due_date_policy: WeekEndPolicy = field(default=WeekEndPolicy.NEXT_BANK_DAY)
     statement_policy: WeekEndPolicy = field(default=WeekEndPolicy.PREV_BANK_DAY)
     bill_post_policy: InstallmentPolicy = field(
-        default=InstallmentPolicy.ON_STATEMENT_DAY
+        default=InstallmentPolicy.ON_PURCHASE_DAY
     )
 
 
@@ -53,26 +75,31 @@ class CreditCardInstance:
     due_date_ref: int
     statement_day: int
 
-    def due_date(self, reference_date: dt.date) -> dt.date:
+    def due_date(self, post_date: dt.date) -> dt.date:
         if self.credit_card.due_date_type == DueDateType.X_DAYS_AFTER:
-            return self._x_days_after(reference_date)
+            return self._x_days_after(post_date)
         if self.credit_card.due_date_type == DueDateType.XTH_OF_MONTH:
             raise NotImplementedError("Due date type not yet implemented")
 
-    def statement_date(self, reference_date: dt.date):
-        true_statement_date = safe_date(
-            reference_date.year, reference_date.month, self.statement_day
+    def statement_date(self, post_date: dt.date):
+        # Let's first weekend_check the statement day on the posting month
+        weekend_checked_statement_day = weekend_check(
+            safe_date(post_date.year, post_date.month, self.statement_day),
+            WeekEndPolicy.NEXT_BANK_DAY,
+        ).day
+
+        # If the posting day is within (i.e. less than) the validated statement day
+        # then we select the statement day of the current month, else, get the statement
+        # day of the next month
+        if post_date.day <= weekend_checked_statement_day:
+            return safe_date(
+                post_date.year, post_date.month, weekend_checked_statement_day
+            )
+        return weekend_check(
+            safe_date(post_date.year, post_date.month, self.statement_day)
+            + relativedelta.relativedelta(months=1),
+            WeekEndPolicy.NEXT_BANK_DAY,
         )
-
-        # weekend_check the true statement_date
-        weekend_checked_statement_date = weekend_check(
-            true_statement_date, self.credit_card.statement_policy
-        )
-
-        if reference_date <= weekend_checked_statement_date:
-            return weekend_checked_statement_date
-
-        return self.statement_date(this_day_next_month(true_statement_date))
 
     def _x_days_after(self, reference_date: dt.date):
         # compute due date from statement date
@@ -121,25 +148,41 @@ class CreditCardInstallment:
         return self.charges
 
     def _get_dates_on_purchase(self, start_date: dt.date):
-        dates: List[CreditCardCharge] = []
-        next_charge: dt.date = start_date
-        for _ in range(self.tenure):
-            next_due_date = self.credit_card_instance.due_date(next_charge)
-            next_statement_date = self.credit_card_instance.statement_date(next_charge)
-            next_bill_post_date = next_charge
+        billing_dates: List[dt.date] = [
+            weekend_check(
+                start_date + relativedelta.relativedelta(months=nth),
+                self.credit_card_instance.credit_card.bill_post_policy,
+            )
+            for nth in range(self.tenure)
+        ]
+        statement_dates: List[dt.date] = [
+            weekend_check(
+                self.credit_card_instance.statement_date(date),
+                self.credit_card_instance.credit_card.statement_policy,
+            )
+            for date in billing_dates
+        ]
+        due_dates: List[dt.date] = [
+            weekend_check(
+                self.credit_card_instance.due_date(date),
+                self.credit_card_instance.credit_card.statement_policy,
+            )
+            for date in billing_dates
+        ]
 
-            charge = CreditCardCharge(
-                self.credit_card_instance.credit_card.name,
-                self._monthly_amount,
-                next_bill_post_date,
-                next_statement_date,
-                next_due_date,
-            )
-            dates.append(charge)
-            next_charge = this_day_next_month(
-                next_statement_date, self.credit_card_instance.statement_day
-            )
-        return dates
+        # partially filled-out charge
+        pcharge = partial(
+            CreditCardCharge,
+            credit_card_name=self.credit_card_instance.credit_card.name,
+            amount=self._monthly_amount,
+        )
+
+        charges: List[CreditCardCharge] = [
+            pcharge(bill_post_date=bd, statement_date=sd, due_date=dd)
+            for bd, sd, dd in zip(billing_dates, statement_dates, due_dates)
+        ]
+
+        return charges
 
     def _get_dates_on_statement(self, start_date: dt.date):
         dates: List[CreditCardCharge] = []
@@ -171,3 +214,4 @@ class CreditCardInstallment:
                 next_statement_date, self.credit_card_instance.statement_day
             )
         return dates
+

@@ -26,4 +26,4 @@ RUN poetry install --no-interaction --no-ansi
 EXPOSE 8501
 
 # Entry point for the container
-CMD ["sh", "-c", "streamlit run happybarra/frontend/app.py -- --dev"]
+CMD ["sh", "-c", "streamlit run happybarra/frontend/app.py"]

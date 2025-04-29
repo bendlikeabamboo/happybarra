@@ -6,11 +6,18 @@ import os
 import click
 import streamlit as st
 import yaml
+from dotenv import load_dotenv
 
 # This import will register all data inside these modules so we can access
 # their respective registries later in the script.
 from happybarra.frontend.data import banks, credit_cards, networks  # noqa: F401
-from happybarra.frontend.services import helpers
+from happybarra.frontend.services import (
+    CONFIG_BYPASS_LOGIN_HOOK,
+    CONFIG_DEV_MODE_HOOK,
+    CONFIG_USE_MOCKS_HOOK,
+)
+
+load_dotenv()
 
 
 @click.command()
@@ -70,11 +77,8 @@ def setup_logging():
 
 def main(use_mocks: bool = False, bypass_login: bool = False):
     # Register the CLI hooks
-    st.session_state[helpers.CONFIG_USE_MOCKS_HOOK] = use_mocks
-    st.session_state[helpers.CONFIG_BYPASS_LOGIN_HOOK] = bypass_login
-
-    # Setup streamlit page config
-    st.set_page_config(page_title="happybarra", page_icon="🐹")
+    st.session_state[CONFIG_USE_MOCKS_HOOK] = use_mocks
+    st.session_state[CONFIG_BYPASS_LOGIN_HOOK] = bypass_login
 
     #
     # PAGE CONTROL
@@ -83,36 +87,47 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
 
     #
     # Check if login bypass is enabled
-    if st.session_state.get(helpers.CONFIG_BYPASS_LOGIN_HOOK, False):
+    if st.session_state.get(CONFIG_BYPASS_LOGIN_HOOK, False):
         st.session_state["login__logged_in"] = True
 
     # if it's not, then show login
     if not st.session_state.get("login__logged_in", False):
+        # Setup streamlit page config
+        st.set_page_config(page_title="happybarra", page_icon="🐹")
+
         #
         ## Define the pages
-        login = st.Page("pages/login.py", title="Access 🐹 happybarra")
+        login = st.Page("page/login.py", title="Access 🐹 happybarra")
 
         pages_to_show = {"Login": [login]}
         pg = st.navigation(pages_to_show)
         pg.run()
-        if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
+        if st.session_state.get(CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
+            reset_state = st.button(label="Reset Session State")
+            if reset_state:
+                for key in st.session_state:
+                    del st.session_state[key]
+                st.rerun()
 
     # if successfully logged in, they will see different set of pages.
     if st.session_state.get("login__logged_in", False):
         #
         ## Define the pages
-        home = st.Page("pages/home.py", title="🏠 Home")
+        home = st.Page("page/home.py", title="🏠 Home")
         installment = st.Page(
-            "pages/installment_schedule.py", title="🗓️ Installment Schedule"
+            "page/installment_schedule.py", title="🗓️ Installment Schedule"
         )
         credit_card = st.Page(
-            "pages/add_credit_card.py", title="💳 Add Credit Card Tracker"
+            "page/add_credit_card.py", title="💳 Add Credit Card Tracker"
         )
         manage_credit_cards = st.Page(
-            "pages/manage_credit_cards.py", title="🛠️ Manage Credit Cards"
+            "page/manage_credit_cards.py", title="🛠️ Manage Credit Cards"
         )
-        logout = st.Page("pages/logout.py", title="⬅️ Logout")
+        logout = st.Page("page/logout.py", title="⬅️ Logout")
+        dues_tracker = st.Page("page/dues_tracker.py", title="💸 Dues Tracker")
+        manage_dues = st.Page("page/manage_dues.py", title="⚓ Manage Dues")
+
         pages_to_show = {
             "": [home],
             "Calculators": [
@@ -122,6 +137,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
                 credit_card,
                 manage_credit_cards,
             ],
+            "Dues": [dues_tracker, manage_dues],
             "Account": [
                 logout,
             ],
@@ -130,8 +146,15 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         pg.run()
 
         # for dev purposes
-        if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
+        if st.session_state.get(CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
+            reset_state = st.button(label="Reset Session State")
+            if reset_state:
+                for key in [
+                    state for state in st.session_state if "login" not in state
+                ]:
+                    del st.session_state[key]
+                st.rerun()
 
 
 if __name__ == "__main__":

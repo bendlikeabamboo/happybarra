@@ -11,7 +11,7 @@ from happybarra.backend.dependencies import (
     SyncSelectRequestBuilder,
     apikey_scheme,
     get_authed_supabase_client,
-    send_execute_commnad,
+    send_execute_command,
     supabase,
     verify_auth_header,
 )
@@ -148,7 +148,7 @@ async def get_credit_cards(authorization: str = Depends(apikey_scheme)):
     request.headers = key_dict or request.headers.update(key_dict)
 
     # execute the command
-    response = send_execute_commnad(request=request)
+    response = send_execute_command(request=request)
 
     # return the dataclass
     return CreditCards(**response.model_dump())
@@ -185,7 +185,7 @@ async def update_credit_card_statement_date(
 
     _logger.debug("Sending update command")
     # execute the command
-    response = send_execute_commnad(request=request)
+    response = send_execute_command(request=request)
 
     # return the dataclass
     return response.model_dump()
@@ -222,7 +222,7 @@ async def update_credit_card_due_date_reference(
 
     _logger.debug("Sending update command")
     # execute the command
-    response = send_execute_commnad(request=request)
+    response = send_execute_command(request=request)
 
     # return the dataclass
     return response.model_dump()
