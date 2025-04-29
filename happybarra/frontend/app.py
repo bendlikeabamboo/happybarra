@@ -11,7 +11,11 @@ from dotenv import load_dotenv
 # This import will register all data inside these modules so we can access
 # their respective registries later in the script.
 from happybarra.frontend.data import banks, credit_cards, networks  # noqa: F401
-from happybarra.frontend.services import helpers
+from happybarra.frontend.services import (
+    CONFIG_BYPASS_LOGIN_HOOK,
+    CONFIG_DEV_MODE_HOOK,
+    CONFIG_USE_MOCKS_HOOK,
+)
 
 load_dotenv()
 
@@ -73,8 +77,8 @@ def setup_logging():
 
 def main(use_mocks: bool = False, bypass_login: bool = False):
     # Register the CLI hooks
-    st.session_state[helpers.CONFIG_USE_MOCKS_HOOK] = use_mocks
-    st.session_state[helpers.CONFIG_BYPASS_LOGIN_HOOK] = bypass_login
+    st.session_state[CONFIG_USE_MOCKS_HOOK] = use_mocks
+    st.session_state[CONFIG_BYPASS_LOGIN_HOOK] = bypass_login
 
     #
     # PAGE CONTROL
@@ -83,7 +87,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
 
     #
     # Check if login bypass is enabled
-    if st.session_state.get(helpers.CONFIG_BYPASS_LOGIN_HOOK, False):
+    if st.session_state.get(CONFIG_BYPASS_LOGIN_HOOK, False):
         st.session_state["login__logged_in"] = True
 
     # if it's not, then show login
@@ -98,7 +102,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         pages_to_show = {"Login": [login]}
         pg = st.navigation(pages_to_show)
         pg.run()
-        if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
+        if st.session_state.get(CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
             reset_state = st.button(label="Reset Session State")
             if reset_state:
@@ -142,7 +146,7 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         pg.run()
 
         # for dev purposes
-        if st.session_state.get(helpers.CONFIG_DEV_MODE_HOOK, False):
+        if st.session_state.get(CONFIG_DEV_MODE_HOOK, False):
             st.write(st.session_state)
             reset_state = st.button(label="Reset Session State")
             if reset_state:

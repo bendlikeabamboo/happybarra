@@ -2,8 +2,8 @@ import datetime as dt
 import logging
 from dataclasses import dataclass, field
 from decimal import Decimal
-from functools import partial
-from typing import List
+from functools import partial, wraps
+from typing import List, TypeVar
 
 from dateutil import relativedelta
 from pydantic import BaseModel
@@ -14,8 +14,7 @@ from happybarra.frontend.models.enums import (
     InstallmentPolicy,
     WeekEndPolicy,
 )
-from happybarra.frontend.services.helpers import (
-    instance_registry,
+from happybarra.frontend.services import (
     safe_date,
     this_day_next_month,
     weekend_check,
@@ -23,6 +22,27 @@ from happybarra.frontend.services.helpers import (
 
 _logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
+def instance_registry(cls: T) -> T:
+    "Attach a registry to a class"
+
+    # save the original init method to a variable
+    original_init = cls.__init__
+
+    # declare an empty registry
+    cls.registry = dict()
+
+    # new init method that registers the instance, yey
+    @wraps(original_init)
+    def new_init(self, **kwargs):
+        original_init(self, **kwargs)
+        cls.registry[self.name] = self
+
+    # replace init with new init method
+    cls.__init__ = new_init
+    cls.__annotations__["registry"] = dict
+    return cls
 
 @instance_registry
 class Bank(BaseModel):
@@ -194,3 +214,4 @@ class CreditCardInstallment:
                 next_statement_date, self.credit_card_instance.statement_day
             )
         return dates
+

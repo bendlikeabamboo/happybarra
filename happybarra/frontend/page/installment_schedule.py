@@ -1,5 +1,6 @@
 import logging
 from types import SimpleNamespace
+from typing import Tuple
 
 import pandas as pd
 import streamlit as st
@@ -12,7 +13,7 @@ from happybarra.frontend.models import (
     InstallmentAmountType,
     Network,
 )
-from happybarra.frontend.services.helpers import (
+from happybarra.frontend.services import (
     CONFIG_USE_MOCKS_HOOK,
     build_authorization_header,
     bulk_create_new_installment_schedules,
@@ -97,13 +98,31 @@ if st.session_state.get(VK_SUCCESSFULLY_ADDED_TO_DUES, False):
     )
     st.session_state[VK_SUCCESSFULLY_ADDED_TO_DUES] = False
 
+
+def submit_button():
+    left, right = st.columns([5.5, 1])
+    with right:
+        button = st.button("Submit ➡️")
+    return button
+
+
+def submit_and_go_back_buttons() -> Tuple[bool, bool]:
+    col1, col2 = st.columns([5.5, 1])
+    with col1:
+        go_back = st.button("⬅️ Go back", type="tertiary")
+    with col2:
+        submit = st.button("Submit ➡️", type="secondary")
+    return submit, go_back
+
+
 # Bank and network subpage
 if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
     _logger.debug("Asking for bank and network")
     st.markdown("Enter your credit card info:")
     bank = st.selectbox("Bank", [bank for bank in Bank.registry])
     network = st.selectbox("Network", [network for network in Network.registry])
-    bank_and_network_submitted = st.button("Submit")
+
+    bank_and_network_submitted = submit_button()
 
     _logger.debug("Also offering user a list of his credit cards")
     headers = build_authorization_header()
@@ -119,9 +138,12 @@ if st.session_state[PAGE_KEY] == PK_BANK_AND_NETWORK_SELECTION:
         st.markdown("---")
         st.markdown("Or use one of your tracked credit cards")
         user_credit_card_selection = st.selectbox("", options=names)
-        use_credit_card_submitted = st.button(
-            key=BT_USE_EXISTING_CREDIT_CARD, label="Submit"
-        )
+
+        _, right_2 = st.columns([5.5, 1])
+        with right_2:
+            use_credit_card_submitted = st.button(
+                key=BT_USE_EXISTING_CREDIT_CARD, label="Submit ➡️"
+            )
 
     if bank_and_network_submitted:
         st.session_state[VK_BANK] = bank
@@ -187,12 +209,17 @@ if st.session_state[PAGE_KEY] == PK_CREDIT_CARD_SELECTION:
     # if validation passed, then we ask for credit card
     _logger.debug("Asking for credit card")
     credit_card = st.selectbox("Credit Card", available_cards)
-    credit_card_submitted = st.button("Submit")
+
+    credit_card_submitted, go_back = submit_and_go_back_buttons()
     if credit_card_submitted:
         st.session_state[VK_CREDIT_CARD_KEY] = credit_card
         st.session_state[VK_CREDIT_CARD_OBJECT] = CreditCard.registry[credit_card]
         st.session_state[PAGE_KEY] = PK_KEY_DATE_SELECTION
         st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_BANK_AND_NETWORK_SELECTION
+        st.rerun()
+
 
 if st.session_state[PAGE_KEY] == PK_KEY_DATE_SELECTION:
     _logger.debug("Key date selection")
@@ -200,7 +227,8 @@ if st.session_state[PAGE_KEY] == PK_KEY_DATE_SELECTION:
     due_date_ref = st.select_slider(
         "How many days after your statement does your due date fall?", range(1, 46)
     )
-    dates_submitted = st.button("Submit")
+
+    dates_submitted, go_back = submit_and_go_back_buttons()
     if dates_submitted:
         st.session_state[VK_STATEMENT_DATE] = statement_date
         st.session_state[VK_DUE_DATE_REF] = due_date_ref
@@ -210,6 +238,9 @@ if st.session_state[PAGE_KEY] == PK_KEY_DATE_SELECTION:
             statement_day=statement_date,
         )
         st.session_state[PAGE_KEY] = PK_DEFINE_INSTALLMENT
+        st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_CREDIT_CARD_SELECTION
         st.rerun()
 
 if st.session_state[PAGE_KEY] == PK_DEFINE_INSTALLMENT:

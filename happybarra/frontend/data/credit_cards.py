@@ -1,12 +1,4 @@
-from happybarra.frontend.data.networks import (
-    AMERICAN_EXPRESS,
-    DINERS_CLUB_INTERNATIONAL,
-    JCB,
-    MASTERCARD,
-    UNIONPAY,
-    VISA,
-)
-from happybarra.frontend.models.models import CreditCard as CC
+from happybarra.frontend.models import CreditCard as CC
 
 from .banks import (
     AUB,
@@ -21,6 +13,14 @@ from .banks import (
     RCBC,
     SECURITY_BANK,
     UNIONBANK,
+)
+from .networks import (
+    AMERICAN_EXPRESS,
+    DINERS_CLUB_INTERNATIONAL,
+    JCB,
+    MASTERCARD,
+    UNIONPAY,
+    VISA,
 )
 
 # BPI Credit Cards
@@ -224,27 +224,27 @@ CC(bank=CHINABANK, network=MASTERCARD, name="Chinabank Prime Mastercard")
 
 # BDO
 # https://www.bdo.com.ph/personal/cards/credit-cards
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Cashback Credit Card")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Explorer Credit Card")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Platinum Credit Card")
+CC(bank=BDO, network=AMERICAN_EXPRESS, name="Blue from American Express")
+CC(bank=BDO, network=DINERS_CLUB_INTERNATIONAL, name="BDO Diners Club International")
+CC(bank=BDO, network=DINERS_CLUB_INTERNATIONAL, name="BDO Diners Club Premiere")
+CC(bank=BDO, network=JCB, name="BDO JCB Gold")
+CC(bank=BDO, network=JCB, name="BDO JCB Lucky Cat")
+CC(bank=BDO, network=JCB, name="BDO JCB Platinum")
+CC(bank=BDO, network=MASTERCARD, name="BDO Bench Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO Gold Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO Installment Card")
+CC(bank=BDO, network=MASTERCARD, name="BDO Platinum Mastercard")
+CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Orange")
 CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Purple")
 CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Yellow Green")
-CC(bank=BDO, network=MASTERCARD, name="BDO ShopMore Mastercard - Orange")
 CC(bank=BDO, network=MASTERCARD, name="BDO Standard Mastercard")
-CC(bank=BDO, network=MASTERCARD, name="BDO Bench Mastercard")
-CC(bank=BDO, network=MASTERCARD, name="BDO Installment Card")
-CC(bank=BDO, network=MASTERCARD, name="BDO Gold Mastercard")
-CC(bank=BDO, network=MASTERCARD, name="BDO Platinum Mastercard")
 CC(bank=BDO, network=MASTERCARD, name="BDO World Elite Mastercard")
+CC(bank=BDO, network=UNIONPAY, name="BDO Diamond UnionPay")
+CC(bank=BDO, network=UNIONPAY, name="BDO Gold UnionPay")
 CC(bank=BDO, network=VISA, name="BDO Visa Classic")
 CC(bank=BDO, network=VISA, name="BDO Visa Gold")
 CC(bank=BDO, network=VISA, name="BDO Visa Platinum")
 CC(bank=BDO, network=VISA, name="BDO Visa Signature")
-CC(bank=BDO, network=UNIONPAY, name="BDO Gold UnionPay")
-CC(bank=BDO, network=UNIONPAY, name="BDO Diamond UnionPay")
-CC(bank=BDO, network=JCB, name="BDO JCB Lucky Cat")
-CC(bank=BDO, network=JCB, name="BDO JCB Gold")
-CC(bank=BDO, network=JCB, name="BDO JCB Platinum")
-CC(bank=BDO, network=DINERS_CLUB_INTERNATIONAL, name="BDO Diners Club International")
-CC(bank=BDO, network=DINERS_CLUB_INTERNATIONAL, name="BDO Diners Club Premiere")
-CC(bank=BDO, network=AMERICAN_EXPRESS, name="Blue from American Express")
-CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Cashback Credit Card")
-CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Explorer Credit Card")
-CC(bank=BDO, network=AMERICAN_EXPRESS, name="American Express Platinum Credit Card")

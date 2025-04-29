@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 
-from happybarra.frontend.services import helpers
+from happybarra.frontend.services import CONFIG_USE_MOCKS_HOOK
 
 # PAGE STATES
 PAGE_KEY = "login"
@@ -61,7 +61,7 @@ if creds_submitted:
             # if dev-ing use this branch to bypass login request
             # NOTE: this doesn't authenticate you with the database so inserts will
             # mostly be an RLS violation
-            if st.session_state[helpers.CONFIG_USE_MOCKS_HOOK]:
+            if st.session_state[CONFIG_USE_MOCKS_HOOK]:
                 import time
 
                 time.sleep(1.5)

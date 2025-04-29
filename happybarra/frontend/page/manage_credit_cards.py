@@ -6,11 +6,14 @@ import pandas as pd
 import requests
 import streamlit as st
 
-from happybarra.frontend.services.helpers import (
+from happybarra.frontend.services import (
     BACKEND_URL,
     CONFIG_USE_MOCKS_HOOK,
     build_authorization_header,
     fetch_list_of_credit_cards,
+    submit_button,
+    submit_and_go_back_buttons,
+    go_back_button
 )
 
 st.set_page_config(page_title="happybarra", page_icon="🐹", layout="centered")
@@ -89,9 +92,8 @@ if st.session_state.get(PAGE_KEY) == PK_LANDING:
             label="Select credit card to modify:",
             options=user_view_df["name"].to_list(),
         )
-        submit_modify = st.button(label="Modify", key="Modify")
-
-        if submit_modify:
+        submit = submit_button()
+        if submit:
             # isolate the card to modify
             card_filter = df["credit_card_instance__name"] == card_to_modify
             chosen_credit_card = df.loc[card_filter].to_dict(orient="records")
@@ -121,8 +123,8 @@ if st.session_state.get(PAGE_KEY) == PK_CHOOSE_OPERATION:
     operation = st.selectbox(
         label="What do you want to do?", options=operations_available
     )
-    submit_operation = st.button(label="Submit")
-    if submit_operation:
+    submit, go_back = submit_and_go_back_buttons()
+    if submit:
         operation_to_page_key_mapper = {
             "Change statement date": PK_CHANGE_STATEMENT_DATE,
             "Change due date reference": PK_CHANGE_DUE_DATE_REFERENCE,
@@ -131,10 +133,13 @@ if st.session_state.get(PAGE_KEY) == PK_CHOOSE_OPERATION:
         # modify st.session_state
         st.session_state[PAGE_KEY] = operation_to_page_key_mapper.get(operation)
         st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_LANDING
+        st.rerun()
 
 if st.session_state.get(PAGE_KEY) == PK_CHANGE_STATEMENT_DATE:
     statement_date: int = st.select_slider("Select new statement date", range(1, 32))
-    submit = st.button("Submit")
+    submit, go_back = submit_and_go_back_buttons()
     if submit:
         # build out the request body
 
@@ -165,12 +170,15 @@ if st.session_state.get(PAGE_KEY) == PK_CHANGE_STATEMENT_DATE:
                 st.error("Wow somethign went wrong here...")
                 time.sleep(5)
                 st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_CHOOSE_OPERATION
+        st.rerun()
 
 if st.session_state.get(PAGE_KEY) == PK_CHANGE_DUE_DATE_REFERENCE:
     due_date_reference: int = st.select_slider(
         "Select new due date reference", range(1, 46)
     )
-    submit = st.button("Submit")
+    submit, go_back = submit_and_go_back_buttons()
     if submit:
         # build out the request body
 
@@ -201,14 +209,18 @@ if st.session_state.get(PAGE_KEY) == PK_CHANGE_DUE_DATE_REFERENCE:
                 st.error("Wow something went wrong here...")
                 time.sleep(5)
                 st.rerun()
+    
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_CHOOSE_OPERATION
+        st.rerun()
 
 if st.session_state.get(PAGE_KEY) == PK_DELETE_CREDIT_CARD:
     credit_card = st.session_state.get(VK_CHOSEN_CREDIT_CARD)
     name = st.session_state[VK_CHOSEN_CREDIT_CARD][0]["credit_card_instance__name"]
     st.markdown(f"You are deleting your credit card **{name or '[blank name]'}**")
     st.markdown("Are you sure? 🥹")
-    sure = st.button(label="I am sure 😔", type="primary")
-    if sure:
+    submit, go_back = submit_and_go_back_buttons()
+    if submit:
         # build authorization header
 
         with st.spinner("Deleting card..."):
@@ -229,11 +241,14 @@ if st.session_state.get(PAGE_KEY) == PK_DELETE_CREDIT_CARD:
             st.session_state[VK_ERROR] = response.content
             st.session_state[PAGE_KEY] = PK_OPERATION_FAILED
             st.rerun()
+    if go_back:
+        st.session_state[PAGE_KEY] = PK_CHOOSE_OPERATION
+        st.rerun()
 
 
 if st.session_state.get(PAGE_KEY) == PK_OPERATION_SUCCESS:
     st.success(body="Credit card operation success 🎉")
-    go_back = st.button(label="Go back")
+    go_back = go_back_button()
     if go_back:
         keys_to_delete = [key for key in st.session_state if key.startswith(PAGE_KEY)]
         for key in keys_to_delete:
@@ -246,7 +261,7 @@ if st.session_state.get(PAGE_KEY) == PK_OPERATION_FAILED:
     st.error(
         body=f"Credit card operation failed 🥹. Error: {st.session_state[VK_ERROR]}"
     )
-    go_back = st.button(label="Go back")
+    go_back = go_back_button()
     if go_back:
         keys_to_delete = [key for key in st.session_state if key.startswith(PAGE_KEY)]
         for key in keys_to_delete:
