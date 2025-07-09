@@ -4,7 +4,7 @@ import os
 import yaml
 from fastapi import FastAPI
 
-from .routers import banks, credit_cards, dues, security
+from .routers import banks, credit_cards, dues, security, savings
 
 tags_metadata = [
     {
@@ -13,6 +13,8 @@ tags_metadata = [
     },
     {"name": "Security", "description": "PM is the 🔒"},
     {"name": "Credit Cards", "description": "well, stuff we want (or not) to track"},
+    {"name": "Dues", "description": "stay on top"},
+    {"name": "Savings", "description": "probably non-existent 😉"},
 ]
 
 
@@ -42,6 +44,7 @@ app.include_router(banks.router)
 app.include_router(security.router)
 app.include_router(credit_cards.router)
 app.include_router(dues.router)
+app.include_router(savings.router)
 
 
 @app.get("/")

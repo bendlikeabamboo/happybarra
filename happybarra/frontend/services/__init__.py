@@ -1,4 +1,10 @@
-from .components import go_back_button, submit_and_go_back_buttons, submit_button
+from .components import (
+    form_submit_and_go_back_buttons,
+    form_submit_button,
+    go_back_button,
+    submit_and_go_back_buttons,
+    submit_button,
+)
 from .constants import (
     BACKEND_URL,
     CONFIG_BYPASS_LOGIN_HOOK,
@@ -26,6 +32,8 @@ __all__ = [
     "submit_and_go_back_buttons",
     "submit_button",
     "go_back_button",
+    "form_submit_button",
+    "form_submit_and_go_back_buttons",
     "BACKEND_URL",
     "CONFIG_BYPASS_LOGIN_HOOK",
     "CONFIG_DEV_MODE_HOOK",

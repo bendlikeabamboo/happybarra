@@ -127,12 +127,13 @@ def main(use_mocks: bool = False, bypass_login: bool = False):
         logout = st.Page("page/logout.py", title="⬅️ Logout")
         dues_tracker = st.Page("page/dues_tracker.py", title="💸 Dues Tracker")
         manage_dues = st.Page("page/manage_dues.py", title="⚓ Manage Dues")
+        savings_schedule = st.Page(
+            "page/savings_schedule.py", title="💰 Savings Schedule"
+        )
 
         pages_to_show = {
             "": [home],
-            "Calculators": [
-                installment,
-            ],
+            "Calculators": [installment, savings_schedule],
             "Credit Cards": [
                 credit_card,
                 manage_credit_cards,
