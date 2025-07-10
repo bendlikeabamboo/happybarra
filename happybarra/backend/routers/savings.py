@@ -1,7 +1,7 @@
 import datetime as dt
 import logging
 from types import NoneType
-from typing import Annotated, List
+from typing import Annotated, List, AsyncGenerator
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException
@@ -19,7 +19,7 @@ from happybarra.backend.dependencies import (
 
 _logger = logging.getLogger("happybarra.backend.routers.savings")
 
-router = APIRouter(prefix="/api/v1/savings", tags=["Savings"])
+router = APIRouter(prefix="/api/v1/savings", tags=["savings"])
 
 
 class SavingsForm(BaseModel):
@@ -43,10 +43,10 @@ class SavingsDataModel(BaseModel):
 
 class SavingsDataResponse(BaseModel):
     data: List[SavingsDataModel]
-    count: int
+    count: int | NoneType
 
 
-@router.get("/")
+@router.get("")
 async def get_savings(
     authorization=Depends(apikey_scheme),
 ) -> SavingsDataResponse:
@@ -59,7 +59,7 @@ async def get_savings(
     return response
 
 
-@router.post("/")
+@router.post("")
 async def insert_savings(
     savings_plan_form: SavingsForm, authorization=Depends(apikey_scheme)
 ):
@@ -101,6 +101,10 @@ class SavingsScheduleInsertRequest(BaseModel):
     amount: float
     user_id: str
 
+    @field_serializer("date")
+    def serialize_date(self, date: dt.date) -> str:
+        return date.strftime("%Y-%m-%d")
+
 
 class SavingsScheduleDataModel(BaseModel):
     savings_id: str
@@ -110,13 +114,17 @@ class SavingsScheduleDataModel(BaseModel):
     amount: float
     user_id: str
 
+    @field_serializer("date")
+    def serialize_date(self, date: dt.date) -> str:
+        return date.strftime("%Y-%m-%d")
+
 
 class SavingsScheduleDataResponse(BaseModel):
     data: List[SavingsDataModel]
     count: int
 
 
-@router.get("/schedule/")
+@router.get("/schedule")
 async def get_savings_schedule(
     savings_schedule_form: SavingsScheduleForm, authorization=Depends(apikey_scheme)
 ) -> SavingsDataResponse: ...
@@ -130,26 +138,35 @@ async def insert_savings_schedule(
     verify_auth_header(authorization=authorization)
 
     user_id = get_user_id(authorization=authorization)
-    savings_data: List[SavingsDataModel] = await get_savings(
-        authorization=authorization
-    ).data
+    savings_response = await get_savings(authorization=authorization)
+    savings_data = savings_response.data
 
+    print(savings_data)
     target_savings: SavingsDataModel = [
         savings
         for savings in savings_data
-        if savings.name == savings_schedule_form.savings_name
+        if savings["name"] == savings_schedule_form.savings_name
     ]
     try:
         assert len(target_savings) == 1
     except AssertionError as er:
+        error_str = "Found multiple instances of the savings name: %s\nError:%s"
         _logger.error(
-            "Found multiple instances of the savings name: %s",
+            error_str,
             savings_schedule_form.savings_name,
+            er,
+        )
+        raise HTTPException(
+            status_code=409,
+            details=(
+                error_str % savings_schedule_form.savings_name,
+                er,
+            ),
         )
     record_to_insert = SavingsScheduleInsertRequest(
-        savings_id=target_savings.id,
+        savings_id=target_savings[0]["id"],
         date=savings_schedule_form.date,
-        amount=savings_schedule_form.date,
+        amount=savings_schedule_form.amount,
         user_id=user_id,
     )
 
@@ -161,9 +178,8 @@ async def insert_savings_schedule(
     )
 
     request = add_authorization_header(authorization=authorization, request=request)
-    send_execute_command(request=request)
-
-    # TODO: Verify if savings is indeed created. Check function above.
+    response = send_execute_command(request=request)
+    return response
 
 
 # @router.post("/schedule")

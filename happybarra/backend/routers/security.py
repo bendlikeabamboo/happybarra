@@ -15,7 +15,7 @@ from happybarra.backend.services.helpers import async_logged
 # Create logger
 _logger = logging.getLogger("happybarra.backend.routers.security")
 
-router = APIRouter(prefix="/api/v1/security", tags=["Security"])
+router = APIRouter(prefix="/api/v1/security", tags=["security"])
 
 
 class UserCredentials(BaseModel):

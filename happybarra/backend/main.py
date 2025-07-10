@@ -7,14 +7,14 @@ from fastapi import FastAPI
 from .routers import banks, credit_cards, dues, security, savings
 
 tags_metadata = [
+    {"name": "security", "description": "user authentication api 👤"},
     {
-        "name": "Banks",
-        "description": "Bank operations my guy",
+        "name": "banks",
+        "description": "bank management api 🏦",
     },
-    {"name": "Security", "description": "PM is the 🔒"},
-    {"name": "Credit Cards", "description": "well, stuff we want (or not) to track"},
-    {"name": "Dues", "description": "stay on top"},
-    {"name": "Savings", "description": "probably non-existent 😉"},
+    {"name": "credit_cards", "description": "credit card management api. user instances of credit cards 💳 and credit card definitions 🎲"},
+    {"name": "dues", "description": "dues api for user instances dues 💸"},
+    {"name": "savings", "description": "savings api for user instances savings 🪙"},
 ]
 
 
@@ -40,8 +40,8 @@ def setup_logging():
 setup_logging()
 
 app = FastAPI(openapi_tags=tags_metadata)
-app.include_router(banks.router)
 app.include_router(security.router)
+app.include_router(banks.router)
 app.include_router(credit_cards.router)
 app.include_router(dues.router)
 app.include_router(savings.router)

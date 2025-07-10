@@ -10,7 +10,7 @@ from happybarra.backend.services.helpers import async_logged
 _logger = logging.getLogger("happybarra.backend.routers.banks")
 
 
-router = APIRouter(prefix="/api/v1/banks", tags=["Banks"])
+router = APIRouter(prefix="/api/v1/banks", tags=["banks"])
 
 
 @async_logged(_logger)

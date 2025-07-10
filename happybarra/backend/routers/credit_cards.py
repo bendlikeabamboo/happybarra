@@ -21,7 +21,7 @@ from happybarra.backend.services.helpers import async_logged
 # Create logger
 _logger = logging.getLogger("happybarra.backend.routers.credit_cards")
 
-router = APIRouter(prefix="/api/v1/credit_cards", tags=["Credit Cards"])
+router = APIRouter(prefix="/api/v1/credit_cards", tags=["credit_cards"])
 
 
 class User(BaseModel):
