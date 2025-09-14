@@ -16,8 +16,18 @@ dependencies = [
     "st-pages (>=1.0.1,<2.0.0)",
     "pyyaml (>=6.0.2,<7.0.0)",
     "streamlit-antd-components (>=0.3.2,<0.4.0)",
+<<<<<<< Updated upstream
     "bokeh (>=3.7.2,<4.0.0)",
     "streamlit-bokeh (>=3.7.1,<4.0.0)",
+=======
+<<<<<<< Updated upstream
+=======
+    "bokeh (>=3.7.2,<4.0.0)",
+    "streamlit-bokeh (>=3.7.1,<4.0.0)",
+    "streamlit (>=1.49.1,<2.0.0)",
+    "supabase (>=2.18.1,<3.0.0)",
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 ]
 
 
@@ -25,16 +35,19 @@ dependencies = [
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.dev]
+optional=true
+
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.4"
 coverage = "^7.6.12"
 pytest-cov = "^6.0.0"
-black = "^25.1.0"
 
 [tool.poetry.group.dev.dependencies]
-streamlit = "^1.42.2"
 jupyterlab = "^4.3.5"
-supabase = "^2.13.0"
 ruff = "^0.11.0"
 
 [tool.ruff.lint]
