@@ -4,7 +4,7 @@ do you have enough money for this? (personal finance application)
 ## Architecture
 - Streamlit for front-end
 - FastAPI for back-end
-- Supabase for database
+- Supabase (postgres) for database
 
 ## Roadmap: Current
 ### Savings
